@@ -24,7 +24,7 @@ var userDir string = "users"
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
 	
 	index := getIndex(GetUserCoinCodes(email), coinCode)
-	if index < 0 || total < 0 {
+	if index < 0 || total <= 0 {
 		return false
 	}
 
@@ -34,14 +34,13 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 	if direction == "in" {
 		balance += total
 	} else if direction == "out" && balance < total {
-		if ! IsExistCode(coinCode) || coinCode == "CZK" {
-			return false	
-		}
+
 		valueCzk := GetCurrencySum(total, coinCode)
 		total, _ = strconv.ParseFloat(valueCzk, 64)
 		index = 0 // CZK
 		coinCode = "CZK"
 		balance, _ = strconv.ParseFloat(balances[index], 64)
+		fmt.Println(balance)
 		if balance < total {
 			return false
 		}
@@ -121,7 +120,6 @@ func AddPayment(email string, balance, total float64, direction, coinCode string
 		return false
 	}
 	index := getIndex(GetUserCoinCodes(email), coinCode)
-	fmt.Println(index)
 	strTotal := fmt.Sprintf("%.2f", total)
 	strBalance := fmt.Sprintf("%.2f", balance)
 	user.Balances[index] = strBalance

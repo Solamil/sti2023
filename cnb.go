@@ -17,24 +17,26 @@ type Rates struct {
 }
 
 var updated time.Time
-var url string = "https://czk.michalkukla.xyz/json"
+var cnbUrl string = "https://czk.michalkukla.xyz/json"
 var cnbDir string = "cache"
 var cnbFilename string = "cnb"
 
 func GetCurrencySum(amount float64, coinCode string) string {
 	var result string = ""
-
+	if amount <= 0 {
+		return result
+	}
 	updateCurrency()
-
+	if ! IsExistCode(coinCode) {
+		return result
+	}
 	rate := GetCurrencyRate(coinCode)
-	value, err := strconv.ParseFloat(rate[0], 64)
-	if err != nil {
-		fmt.Println(err)
+	if len(rate) < 2 {
+		return result
 	}
-	volume, err := strconv.ParseFloat(rate[1], 64)
-	if err != nil {
-		fmt.Println(err)
-	}
+	value, _ := strconv.ParseFloat(rate[0], 64)
+	volume, _ := strconv.ParseFloat(rate[1], 64)
+
 	total := value * (amount/volume)
 	result = fmt.Sprintf("%.2f", total)
 
@@ -57,6 +59,7 @@ func GetCurrencyRate(coinCode string) []string {
 
 func GetDate() string {
 	var rates Rates	
+	updateCurrency()
 	ReadJsonFile(cnbDir, cnbFilename, &rates)
 	return rates.Date
 }
@@ -73,6 +76,11 @@ func IsExistCode(coinCode string) bool {
 }
 
 func updateCurrency() {
+	var rates Rates
+	if ! ReadJsonFile(cnbDir, cnbFilename, &rates) {
+		CurrencyRates()
+		return
+	}
 	now := time.Now()
 	tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 35+1, 0, 0, now.Location())
 
@@ -86,7 +94,7 @@ func updateCurrency() {
 
 func CurrencyRates() {
 	var rates Rates
-	d := Newrequest(url)
+	d := Newrequest(cnbUrl)
 	err := json.Unmarshal([]byte(d), &rates)
 	if err != nil {
 		fmt.Println(err)

@@ -10,7 +10,7 @@ import (
 const HASHSIZE = sha256.Size
 
 func ReadJsonFile(dir, name string, data any) bool {
-	h := hash(name)
+	h := Hash(name)
 	filename := fmt.Sprintf("%x.json", h)
 	byteValue, err := os.ReadFile(dir + "/" + filename)
 	if os.IsNotExist(err) {
@@ -24,7 +24,7 @@ func ReadJsonFile(dir, name string, data any) bool {
 }
 
 func WriteJsonFile(dir, name string, data any) bool {
-	h := hash(name)
+	h := Hash(name)
 	filename := fmt.Sprintf("%x.json", h)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.Mkdir(dir, 0755)
@@ -41,6 +41,6 @@ func WriteJsonFile(dir, name string, data any) bool {
 	return true
 }
 
-func hash(signature string) [HASHSIZE]byte {
+func Hash(signature string) [HASHSIZE]byte {
 	return sha256.Sum256([]byte(signature))
 }

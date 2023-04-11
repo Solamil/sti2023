@@ -8,9 +8,10 @@ import (
 )
 
 func main(){
+	fmt.Printf("%x", sti2023.Hash("michal.kukla@tul.cz"))
 	//sti2023.CurrencyRates()
-	sti2023.CreatePayment("michal.kukla@tul.cz", 20.0, "in", "GBP")
-	fmt.Println(sti2023.GetBalances("michal.kukla@tul.cz"))
+	//sti2023.CreatePayment("michal.kukla@tul.cz", 20.0, "in", "GBP")
+	//fmt.Println(sti2023.GetBalances("michal.kukla@tul.cz"))
 	//sti2023.AddCurrency("michal.kukla@tul.cz", "GBP")
 	http.HandleFunc("/", index_handler)
 	http.HandleFunc("/index.html", index_handler)
