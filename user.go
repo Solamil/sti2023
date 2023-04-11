@@ -20,6 +20,7 @@ type User struct {
 }
 
 var userDir string = "users"
+var user User
 
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
 	
@@ -55,10 +56,13 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 }
 
 func AddCurrency(email string, code string) {
-	var user User
 	if ! ReadJsonFile(userDir, email, &user) {
 		return
 	}
+	if index := getIndex(GetUserCoinCodes(email), coinCode); index > 0 {
+		return
+	}
+	
 
 	if ! IsExistCode(code) {
 		return
@@ -79,7 +83,6 @@ func GetBalance(email string, code string) string {
 }
 
 func GetBalances(email string) []string {
-	var user User
 	if ! ReadJsonFile(userDir, email, &user) {
 		return []string{}
 	}
@@ -103,7 +106,6 @@ func GetNames(email string) []string {
 }
 
 func IsCorrectCode(email, code string) bool {
-	var user User
 	ReadJsonFile(userDir, email, &user)
 	if user.VerifyCode == code {
 		WriteCode(email, "")
@@ -115,7 +117,6 @@ func IsCorrectCode(email, code string) bool {
 }
 
 func AddPayment(email string, balance, total float64, direction, coinCode string) bool {
-	var user User
 	if ! ReadJsonFile(userDir, email, &user) {
 		return false
 	}
@@ -131,7 +132,6 @@ func AddPayment(email string, balance, total float64, direction, coinCode string
 }
 
 func WriteCode(email, code string) {
-	var user User
 	ReadJsonFile(userDir, email, &user)
 	user.VerifyCode = code
 	WriteJsonFile(userDir, email, user)
