@@ -2,9 +2,9 @@ package sti2023
 
 import (
 	"encoding/json"
-	"time"
-	"strconv"
 	"fmt"
+	"strconv"
+	"time"
 )
 
 type Rates struct {
@@ -27,7 +27,7 @@ func GetCurrencySum(amount float64, coinCode string) string {
 		return result
 	}
 	updateCurrency()
-	if ! IsExistCode(coinCode) {
+	if !IsExistCode(coinCode) {
 		return result
 	}
 	rate := GetCurrencyRate(coinCode)
@@ -37,7 +37,7 @@ func GetCurrencySum(amount float64, coinCode string) string {
 	value, _ := strconv.ParseFloat(rate[0], 64)
 	volume, _ := strconv.ParseFloat(rate[1], 64)
 
-	total := value * (amount/volume)
+	total := value * (amount / volume)
 	result = fmt.Sprintf("%.2f", total)
 
 	return result
@@ -58,7 +58,7 @@ func GetCurrencyRate(coinCode string) []string {
 }
 
 func GetDate() string {
-	var rates Rates	
+	var rates Rates
 	updateCurrency()
 	ReadJsonFile(cnbDir, cnbFilename, &rates)
 	return rates.Date
@@ -66,7 +66,7 @@ func GetDate() string {
 
 func IsExistCode(coinCode string) bool {
 	var rates Rates
-	if ! ReadJsonFile(cnbDir, cnbFilename, &rates) {
+	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return false
 	}
 	if i := getIndex(rates.Code, coinCode); i < 0 {
@@ -77,7 +77,7 @@ func IsExistCode(coinCode string) bool {
 
 func updateCurrency() {
 	var rates Rates
-	if ! ReadJsonFile(cnbDir, cnbFilename, &rates) {
+	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		CurrencyRates()
 		return
 	}

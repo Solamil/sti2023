@@ -11,7 +11,7 @@ type User struct {
 	CoinCodes []string `json:"coinCodes"`
 	FirstName string   `json:"firstname"`
 	LastName  string   `json:"lastname"`
-	Payment  struct {
+	Payment   struct {
 		Directions []string `json:"directions"`
 		Totals     []string `json:"totals"`
 		CoinCodes  []string `json:"coinCodes"`
@@ -23,7 +23,7 @@ var userDir string = "users"
 var user User
 
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
-	
+
 	index := getIndex(GetUserCoinCodes(email), coinCode)
 	if index < 0 || total <= 0 {
 		return false
@@ -31,7 +31,7 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 
 	balances := GetBalances(email)
 	balance, _ := strconv.ParseFloat(balances[index], 64)
-		
+
 	if direction == "in" {
 		balance += total
 	} else if direction == "out" && balance < total {
@@ -48,27 +48,25 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 		balance -= total
 
 	} else if direction == "out" && balance >= total {
-		balance -= total	
+		balance -= total
 	} else {
-		return false	
+		return false
 	}
-	return AddPayment(email, balance, total, direction, coinCode) 
+	return AddPayment(email, balance, total, direction, coinCode)
 }
 
 func AddCurrency(email string, code string) {
-	if ! ReadJsonFile(userDir, email, &user) {
+	if !ReadJsonFile(userDir, email, &user) {
 		return
 	}
-	if index := getIndex(GetUserCoinCodes(email), coinCode); index > 0 {
+	if index := getIndex(GetUserCoinCodes(email), code); index > 0 {
 		return
 	}
-	
-
-	if ! IsExistCode(code) {
+	if !IsExistCode(code) {
 		return
 	}
 	user.Balances = append(user.Balances, "0.0")
-	user.CoinCodes = append(user.CoinCodes, code) 	
+	user.CoinCodes = append(user.CoinCodes, code)
 	WriteJsonFile(userDir, email, user)
 }
 
@@ -76,14 +74,14 @@ func GetBalance(email string, code string) string {
 	var result string = ""
 	var index int = getIndex(GetUserCoinCodes(email), code)
 	if index < 0 {
-		return result	
+		return result
 	}
 	result = GetBalances(email)[index]
-	return result 
+	return result
 }
 
 func GetBalances(email string) []string {
-	if ! ReadJsonFile(userDir, email, &user) {
+	if !ReadJsonFile(userDir, email, &user) {
 		return []string{}
 	}
 	return user.Balances
@@ -91,7 +89,7 @@ func GetBalances(email string) []string {
 
 func GetUserCoinCodes(email string) []string {
 	var user User
-	if ! ReadJsonFile(userDir, email, &user) {
+	if !ReadJsonFile(userDir, email, &user) {
 		return []string{}
 	}
 	return user.CoinCodes
@@ -99,7 +97,7 @@ func GetUserCoinCodes(email string) []string {
 
 func GetNames(email string) []string {
 	var user User
-	if ! ReadJsonFile(userDir, email, &user) {
+	if !ReadJsonFile(userDir, email, &user) {
 		return []string{}
 	}
 	return []string{user.FirstName, user.LastName}
@@ -110,14 +108,14 @@ func IsCorrectCode(email, code string) bool {
 	if user.VerifyCode == code {
 		WriteCode(email, "")
 		user.VerifyCode = ""
-		
+
 		return WriteJsonFile(userDir, email, user)
 	}
 	return false
 }
 
 func AddPayment(email string, balance, total float64, direction, coinCode string) bool {
-	if ! ReadJsonFile(userDir, email, &user) {
+	if !ReadJsonFile(userDir, email, &user) {
 		return false
 	}
 	index := getIndex(GetUserCoinCodes(email), coinCode)

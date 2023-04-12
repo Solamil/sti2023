@@ -1,16 +1,16 @@
 package sti2023
 
 import (
-	"testing"
+	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"io"
-	"fmt"
+	"testing"
 )
 
 func TestCreatePayment(t *testing.T) {
-	userDir = "test-data"
+	userDir = "test-cache"
 	cnbDir = "test-cache"
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -23,36 +23,35 @@ func TestCreatePayment(t *testing.T) {
 		byteRates, _ := io.ReadAll(file)
 		w.Write(byteRates)
 	}))
-	cnbUrl = ts.URL 
+	cnbUrl = ts.URL
 
 	var email string = "michal.kukla@tul.cz"
 	var wrongEmail string = "sdkfafa@skdafj.cz"
-	setDefaultUser(userDir, email)	
+	setDefaultUser(userDir, email)
 	tests := []struct {
-		email string
-		total float64 
+		email     string
+		total     float64
 		direction string
-		coinCode string
-		exp bool
+		coinCode  string
+		exp       bool
 	}{
 
-		{email, 140.0,  "in", "CZK", true},
-		{email,   1.25, "in", "GBP", true},
-		{email,   2.0,  "out", "GBP", true},
-		{email,   1.25, "out", "GBP", true},
-		{email,  86.29, "out", "CZK", true},
+		{email, 140.0, "in", "CZK", true},
+		{email, 1.25, "in", "GBP", true},
+		{email, 2.0, "out", "GBP", true},
+		{email, 1.25, "out", "GBP", true},
+		{email, 86.29, "out", "CZK", true},
 
-		{email,   10.0, "out", "GBP", false},
+		{email, 10.0, "out", "GBP", false},
 		{wrongEmail, 20.0, "in", "CZK", false},
 		{email, 20.0, "out", "ABC", false},
-		{email,  0.0, "in", "CZK", false},
+		{email, 0.0, "in", "CZK", false},
 	}
 
 	for _, test := range tests {
-		if got := CreatePayment(test.email, test.total, test.direction, test.coinCode);
-			test.exp != got {
-				t.Errorf("Expected '%t' but, got '%t',\n %.2f %s %s", test.exp, 
-					got, test.total, test.direction, test.coinCode)
+		if got := CreatePayment(test.email, test.total, test.direction, test.coinCode); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %.2f %s %s", test.exp,
+				got, test.total, test.direction, test.coinCode)
 		}
 	}
 
@@ -67,21 +66,21 @@ func TestCreatePayment(t *testing.T) {
 	}
 }
 
-func TestCleanUpCache1(t *testing.T) {
-	var cache_dir string = "test-cache"
-	dirRead, _ := os.Open(cache_dir)
-	dirFiles, _ := dirRead.Readdir(0)
-	for index := range dirFiles {
-		file := dirFiles[index]
-		filename := file.Name()
-		if err := os.Remove(cache_dir + "/" + filename); err != nil {
-			t.Errorf("error %s", err)
-		}
-	}
-	if err := os.Remove(cache_dir + "/"); err != nil {
-		t.Errorf("error %s", err)
-	}
-}
+//  func TestCleanUpCache1(t *testing.T) {
+//  	var cache_dir string = "test-cache"
+//  	dirRead, _ := os.Open(cache_dir)
+//  	dirFiles, _ := dirRead.Readdir(0)
+//  	for index := range dirFiles {
+//  		file := dirFiles[index]
+//  		filename := file.Name()
+//  		if err := os.Remove(cache_dir + "/" + filename); err != nil {
+//  			t.Errorf("error %s", err)
+//  		}
+//  	}
+//  	if err := os.Remove(cache_dir + "/"); err != nil {
+//  		t.Errorf("error %s", err)
+//  	}
+//  }
 
 func setDefaultUser(dir, email string) {
 	var user User
@@ -90,7 +89,7 @@ func setDefaultUser(dir, email string) {
 	user.CoinCodes = append(user.CoinCodes, "CZK")
 	user.Balances = append(user.Balances, "0.0")
 	user.CoinCodes = append(user.CoinCodes, "GBP")
-	user.FirstName = "Michal" 
+	user.FirstName = "Michal"
 	user.LastName = "Kukla"
 
 	WriteJsonFile(dir, "michal.kukla@tul.cz", user)

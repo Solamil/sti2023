@@ -1,12 +1,12 @@
 package sti2023
 
 import (
-	"testing"
+	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"io"
-	"fmt"
+	"testing"
 )
 
 func TestGetCurrencySum(t *testing.T) {
@@ -22,12 +22,12 @@ func TestGetCurrencySum(t *testing.T) {
 		byteRates, _ := io.ReadAll(file)
 		w.Write(byteRates)
 	}))
-	cnbUrl = ts.URL 
+	cnbUrl = ts.URL
 
 	tests := []struct {
-		amount float64
+		amount   float64
 		coinCode string
-		exp string
+		exp      string
 	}{
 		{20.0, "GBP", "537.12"},
 		{-1, "GBP", ""},
