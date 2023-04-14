@@ -66,21 +66,58 @@ func TestCreatePayment(t *testing.T) {
 	}
 }
 
-//  func TestCleanUpCache1(t *testing.T) {
-//  	var cache_dir string = "test-cache"
-//  	dirRead, _ := os.Open(cache_dir)
-//  	dirFiles, _ := dirRead.Readdir(0)
-//  	for index := range dirFiles {
-//  		file := dirFiles[index]
-//  		filename := file.Name()
-//  		if err := os.Remove(cache_dir + "/" + filename); err != nil {
-//  			t.Errorf("error %s", err)
-//  		}
-//  	}
-//  	if err := os.Remove(cache_dir + "/"); err != nil {
-//  		t.Errorf("error %s", err)
-//  	}
-//  }
+func TestAddCurrency(t *testing.T) {
+	userDir = "test-cache"
+	cnbDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+	var user User
+	ReadJsonFile(userDir, email, &user)
+	tests := []struct {
+		email    string
+		coinCode string
+		exp      bool
+	}{
+
+		{email, "ABC", false},
+		{wrongEmail, "CZK", false},
+		{wrongEmail, "EUR", false},
+		{email, "EUR", true},
+	}
+
+	for _, test := range tests {
+		if got := AddCurrency(test.email, test.coinCode); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
+				got, test.email, test.coinCode)
+		}
+	}
+
+	var exp string = "EUR"
+	for _, coinCode := range user.CoinCodes {
+		if coinCode != exp {
+			return
+		}
+	}
+	t.Errorf("Expected '%s' to find in array, but cannot find it", exp)
+
+}
+
+func TestCleanUpCache1(t *testing.T) {
+	var cache_dir string = "test-cache"
+	dirRead, _ := os.Open(cache_dir)
+	dirFiles, _ := dirRead.Readdir(0)
+	for index := range dirFiles {
+		file := dirFiles[index]
+		filename := file.Name()
+		if err := os.Remove(cache_dir + "/" + filename); err != nil {
+			t.Errorf("error %s", err)
+		}
+	}
+	if err := os.Remove(cache_dir + "/"); err != nil {
+		t.Errorf("error %s", err)
+	}
+}
 
 func setDefaultUser(dir, email string) {
 	var user User
