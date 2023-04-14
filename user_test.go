@@ -120,6 +120,30 @@ func TestCleanUpCache1(t *testing.T) {
 	}
 }
 
+func TestCheckPassword(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+	tests := []struct {
+		email     string
+		value	  string 
+		exp       bool
+	}{
+
+		{wrongEmail, "testtest", false},
+		{email, "tedsfa", false},
+		{email, "testest", false},
+		{email, "testtest", true},
+	}
+	for _, test := range tests {
+		if got := CheckPassword(test.email, test.value); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
+				got, test.email, test.value)
+		}
+	}
+}
+
 func setDefaultUser(dir, email string) {
 	var user User
 	user.Password = "37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578"
