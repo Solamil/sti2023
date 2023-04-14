@@ -108,9 +108,7 @@ func IsCorrectCode(email, code string) bool {
 	ReadJsonFile(userDir, email, &user)
 	if user.VerifyCode == code {
 		WriteCode(email, "")
-		user.VerifyCode = ""
-
-		return WriteJsonFile(userDir, email, user)
+		return true 
 	}
 	return false
 }
