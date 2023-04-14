@@ -134,6 +134,17 @@ func WriteCode(email, code string) {
 	WriteJsonFile(userDir, email, user)
 }
 
+func CheckPassword(email, value string) bool {
+	if !ReadJsonFile(userDir, email, &user) {
+		return false
+	}
+	password := fmt.Sprintf("%x", Hash(value))
+	if user.Password == password {
+		return true
+	}
+	return false
+}
+
 func GetPaymentsHTML(email string) []string {
 	return []string{}
 }
