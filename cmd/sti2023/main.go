@@ -12,7 +12,8 @@ import (
 
 func main(){
 	fmt.Printf("%x", sti2023.Hash("michal.kukla@tul.cz"))
-	mockButton("michal.kukla@tul.cz")
+	generateCode()
+	sti2023.WriteCode("michal.kukla@tul.cz", "sdfa")
 	//sti2023.CurrencyRates()
 	//sti2023.CreatePayment("michal.kukla@tul.cz", 20.0, "in", "GBP")
 	//fmt.Println(sti2023.GetBalances("michal.kukla@tul.cz"))
@@ -47,5 +48,11 @@ func mockButton(email string) bool {
 	}
 	total += rand.Float64() 
 	return sti2023.CreatePayment(email, total, direction, coinCode) 
+}
 	
+func generateCode() int {
+	var max int = 9999
+	var min int = 1000
+	var number int = rand.Intn(max-min) + min
+	return number
 }
