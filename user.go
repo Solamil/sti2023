@@ -128,10 +128,7 @@ func CheckPassword(email, value string) bool {
 		return false
 	}
 	password := fmt.Sprintf("%x", Hash(value))
-	if user.Password == password {
-		return true
-	}
-	return false
+	return user.Password == password
 }
 
 func CheckCode(email, code string) bool {
