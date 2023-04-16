@@ -3,6 +3,7 @@ package sti2023
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type User struct {
@@ -16,7 +17,10 @@ type User struct {
 		Totals     []string `json:"totals"`
 		CoinCodes  []string `json:"coinCodes"`
 	} `json:"Payments"`
-	VerifyCode string `json:"verify"`
+	SecondAuth struct {
+		Code string `json:"code"`	
+		Expiry string `json:"expiry"`
+	} `json:"secondAuth"`
 }
 
 var userDir string = "users"
@@ -104,10 +108,20 @@ func GetNames(email string) []string {
 	return []string{user.FirstName, user.LastName}
 }
 
-func IsCorrectCode(email, code string) bool {
+func CheckCode(email, code string) bool {
 	ReadJsonFile(userDir, email, &user)
-	if user.VerifyCode == code {
-		WriteCode(email, "")
+	
+	now := time.Now()
+	expiry, err := time.Parse(time.RFC3339, user.SecondAuth.Expiry)
+	if err != nil {
+		fmt.Println(err)
+	}
+		
+	expiry.Add(time.Minute * 10)
+	if expiry.Before(now) {
+		return false
+	}
+	if user.SecondAuth.Code == code {
 		return true 
 	}
 	return false
@@ -130,7 +144,10 @@ func AddPayment(email string, balance, total float64, direction, coinCode string
 
 func WriteCode(email, code string) {
 	ReadJsonFile(userDir, email, &user)
-	user.VerifyCode = code
+	d := time.Now()
+	exp := d.UTC().Format(time.RFC3339)
+	user.SecondAuth.Code = code
+	user.SecondAuth.Expiry = exp
 	WriteJsonFile(userDir, email, user)
 }
 
