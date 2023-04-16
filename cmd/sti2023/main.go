@@ -13,7 +13,9 @@ import (
 func main(){
 	fmt.Printf("%x", sti2023.Hash("michal.kukla@tul.cz"))
 	generateCode()
+
 	sti2023.WriteCode("michal.kukla@tul.cz", "sdfa")
+	mockButton("michal.kukla@tul.cz")
 	//sti2023.CurrencyRates()
 	//sti2023.CreatePayment("michal.kukla@tul.cz", 20.0, "in", "GBP")
 	//fmt.Println(sti2023.GetBalances("michal.kukla@tul.cz"))
