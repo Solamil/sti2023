@@ -18,7 +18,7 @@ type User struct {
 		CoinCodes  []string `json:"coinCodes"`
 	} `json:"Payments"`
 	SecondAuth struct {
-		Code string `json:"code"`	
+		Code   string `json:"code"`
 		Expiry string `json:"expiry"`
 	} `json:"secondAuth"`
 }
@@ -108,25 +108,6 @@ func GetNames(email string) []string {
 	return []string{user.FirstName, user.LastName}
 }
 
-func CheckCode(email, code string) bool {
-	ReadJsonFile(userDir, email, &user)
-	
-	now := time.Now()
-	expiry, err := time.Parse(time.RFC3339, user.SecondAuth.Expiry)
-	if err != nil {
-		fmt.Println(err)
-	}
-		
-	expiry.Add(time.Minute * 10)
-	if expiry.Before(now) {
-		return false
-	}
-	if user.SecondAuth.Code == code {
-		return true 
-	}
-	return false
-}
-
 func AddPayment(email string, balance, total float64, direction, coinCode string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
@@ -142,15 +123,6 @@ func AddPayment(email string, balance, total float64, direction, coinCode string
 	return WriteJsonFile(userDir, email, user)
 }
 
-func WriteCode(email, code string) {
-	ReadJsonFile(userDir, email, &user)
-	d := time.Now()
-	exp := d.UTC().Format(time.RFC3339)
-	user.SecondAuth.Code = code
-	user.SecondAuth.Expiry = exp
-	WriteJsonFile(userDir, email, user)
-}
-
 func CheckPassword(email, value string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
@@ -160,6 +132,34 @@ func CheckPassword(email, value string) bool {
 		return true
 	}
 	return false
+}
+
+func CheckCode(email, code string) bool {
+	if !ReadJsonFile(userDir, email, &user) {
+		return false
+	}
+
+	now := time.Now()
+	expiry, err := time.Parse(time.RFC3339, user.SecondAuth.Expiry)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if expiry.After(now) && user.SecondAuth.Code != "" && user.SecondAuth.Code == code {
+		return true
+	}
+	return false
+}
+
+func WriteCode(email, code string) {
+	if !ReadJsonFile(userDir, email, &user) {
+		return
+	}
+	d := time.Now()
+	d = d.Add(time.Duration(time.Minute * 10))
+	exp := d.UTC().Format(time.RFC3339)
+	user.SecondAuth.Code = code
+	user.SecondAuth.Expiry = exp
+	WriteJsonFile(userDir, email, user)
 }
 
 func GetPaymentsHTML(email string) []string {
