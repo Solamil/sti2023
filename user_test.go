@@ -134,9 +134,9 @@ func TestVerifyCode(t *testing.T) {
 	var wrongEmail string = "sdkfafa@skdafj.cz"
 	setDefaultUser(userDir, email)
 	tests := []struct {
-		email   string
-		code    string
-		exp     bool
+		email string
+		code  string
+		exp   bool
 	}{
 
 		{wrongEmail, "testtest", false},
