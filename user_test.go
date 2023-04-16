@@ -94,8 +94,9 @@ func TestAddCurrency(t *testing.T) {
 	}
 
 	var exp string = "EUR"
+	ReadJsonFile(userDir, email, &user)
 	for _, coinCode := range user.CoinCodes {
-		if coinCode != exp {
+		if coinCode == exp {
 			return
 		}
 	}
