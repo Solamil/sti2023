@@ -55,19 +55,20 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 	return AddPayment(email, balance, total, direction, coinCode)
 }
 
-func AddCurrency(email string, code string) {
+func AddCurrency(email string, code string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
-		return
+		return false
 	}
 	if index := getIndex(GetUserCoinCodes(email), code); index > 0 {
-		return
+		return false
 	}
 	if !IsExistCode(code) {
-		return
+		return false
 	}
 	user.Balances = append(user.Balances, "0.0")
 	user.CoinCodes = append(user.CoinCodes, code)
 	WriteJsonFile(userDir, email, user)
+	return true
 }
 
 func GetBalance(email string, code string) string {
