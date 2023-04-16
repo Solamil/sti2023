@@ -104,6 +104,54 @@ func TestAddCurrency(t *testing.T) {
 
 }
 
+func TestCheckPassword(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+	tests := []struct {
+		email string
+		value string
+		exp   bool
+	}{
+
+		{wrongEmail, "testtest", false},
+		{email, "tedsfa", false},
+		{email, "testest", false},
+		{email, "testtest", true},
+	}
+	for _, test := range tests {
+		if got := CheckPassword(test.email, test.value); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
+				got, test.email, test.value)
+		}
+	}
+}
+
+func TestVerifyCode(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+	tests := []struct {
+		email   string
+		code    string
+		exp     bool
+	}{
+
+		{wrongEmail, "testtest", false},
+		{email, "", false},
+		{email, "testtest", true},
+	}
+	for _, test := range tests {
+		WriteCode(test.email, test.code)
+		if got := CheckCode(test.email, test.code); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
+				got, test.email, test.code)
+		}
+	}
+}
+
 func TestCleanUpCache1(t *testing.T) {
 	var cache_dir string = "test-cache"
 	dirRead, _ := os.Open(cache_dir)
@@ -117,30 +165,6 @@ func TestCleanUpCache1(t *testing.T) {
 	}
 	if err := os.Remove(cache_dir + "/"); err != nil {
 		t.Errorf("error %s", err)
-	}
-}
-
-func TestCheckPassword(t *testing.T) {
-	userDir = "test-cache"
-	var email string = "michal.kukla@tul.cz"
-	var wrongEmail string = "sdkfafa@skdafj.cz"
-	setDefaultUser(userDir, email)
-	tests := []struct {
-		email     string
-		value	  string 
-		exp       bool
-	}{
-
-		{wrongEmail, "testtest", false},
-		{email, "tedsfa", false},
-		{email, "testest", false},
-		{email, "testtest", true},
-	}
-	for _, test := range tests {
-		if got := CheckPassword(test.email, test.value); test.exp != got {
-			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
-				got, test.email, test.value)
-		}
 	}
 }
 
