@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>IS pro banku</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:300px; margin: auto;}
+a{	text-decoration:none}
+ul li a:hover{color: gray}
+ul li{	display: inline-block; text-decoration: underline; margin: 10px; }
+.value{	margin: 10px 10px 10px 0px; 
+	padding: 0px 0px 0px 2px;
+	border-radius:0px;
+	border: solid;
+	font-size: 20px;
+	border-width: 0px 0px 1px 0px; 
+	text-decoration: none;
+	background:transparent;
+	outline: none;
+}
+h2, h3{	text-align: center; text-decoration: underline;	}
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	border: solid;
+	border-width: 2px 0px 0px 0px;
+}
+</style>
+</head>
+<body>
+	<h3>IS pro banku</h3>
+	<p>{{.InfoText}}</p>
+	<main>
+
+		<form action="/" method="GET" class="form" id="signup_form" style="margin-left: 5px">
+			<br>
+			<input type="email" name="email" class="value" id="email" placeholder="emailová adresa">
+			<br>
+			<input type="password" placeholder="heslo" class="value" id="password">
+			<br>
+			<input type="text" name="code" id="code" class="value" placeholder="ověřovací kód">
+			<br>
+			<input type="button" id="button" value="Přihlásit se" style="font-size: 20px; margin-left: 10px;"/>
+		</form>	
+
+	</main>
+	<footer>
+		<p>Michal Kukla</p>
+		<p><a href="https://github.com/Solamil/sti2023" style="text-decoration: underline" target="_blank">Github</a>
+	</footer>
+</body>
+</html>
