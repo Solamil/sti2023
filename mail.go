@@ -2,6 +2,7 @@ package sti2023
 
 import (
 	"net/smtp"
+	"fmt"
 )
 
 type configMail struct {
@@ -10,6 +11,7 @@ type configMail struct {
 	SmtpUser string `json:"smtpUser"`
 	SmtpPass string `json:"smtpPass"`
 }
+
 var c configMail
 var mailFile string = "mail.json"
 
@@ -22,19 +24,18 @@ func Mail(mail string, code string) bool {
 	if !ReadJsonFile("./", mailFile, &c) {
 		return false
 	}
-	sendTo := mail
+	sendTo := []string{mail}
 	body := []byte(fmt.Sprintf("From: %s\n"+
 		"Ověřovací kód do semestrálního projektu\n\n"+
-		"%s", smtpUser, code))
+		"%s", c.SmtpUser, code))
 
 	auth := smtp.PlainAuth("", c.SmtpUser, c.SmtpPass, c.SmtpHost)
 
 	err := smtp.SendMail(c.SmtpHost+":"+c.SmtpPort, auth, c.SmtpUser, sendTo, body)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return false
 	}
 	fmt.Println("email sent")
 	return true
 }
-
