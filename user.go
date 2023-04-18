@@ -159,6 +159,23 @@ func WriteCode(email, code string) {
 	WriteJsonFile(userDir, email, user)
 }
 
-func GetPaymentsHTML(email string) []string {
-	return []string{}
+func GetPaymentTotal(email string) []string {
+	if !ReadJsonFile(userDir, email, &user) {
+		return []string{}
+	}
+	return user.Payment.Totals
+}
+
+func GetPaymentDirection(email string) []string {
+	if !ReadJsonFile(userDir, email, &user) {
+		return []string{}
+	}
+	return user.Payment.Directions
+}
+
+func GetPaymentCoinCode(email string) []string {
+	if !ReadJsonFile(userDir, email, &user) {
+		return []string{}
+	}
+	return user.Payment.CoinCodes
 }
