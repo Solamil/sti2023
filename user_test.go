@@ -55,10 +55,20 @@ func TestCreatePayment(t *testing.T) {
 		}
 	}
 
-	var user User
-	ReadJsonFile(userDir, email, &user)
+	if len(GetPaymentTotal(email)) != 5 || len(GetPaymentDirection(email)) != 5 ||
+		len(GetPaymentCoinCode(email)) != 5 {
+		t.Errorf(`Expected 5 length for address %s, but got total: %d, direction: %d,
+		coinCode: %d`, wrongEmail, len(GetPaymentTotal(wrongEmail)),
+			len(GetPaymentDirection(wrongEmail)), len(GetPaymentCoinCode(wrongEmail)))
+	}
+	if len(GetPaymentTotal(wrongEmail)) != 0 || len(GetPaymentDirection(wrongEmail)) != 0 ||
+		len(GetPaymentCoinCode(wrongEmail)) != 0 {
+		t.Errorf(`Expected 0 length for address %s, but got total: %d, direction: %d,
+		coinCode: %d`, wrongEmail, len(GetPaymentTotal(wrongEmail)),
+			len(GetPaymentDirection(wrongEmail)), len(GetPaymentCoinCode(wrongEmail)))
+	}
 	var exp string = "0.00"
-	for _, balance := range user.Balances {
+	for _, balance := range GetBalances(email) {
 		if balance != exp {
 			t.Errorf("Expected '%s' but, got '%s'", exp, balance)
 
@@ -72,8 +82,7 @@ func TestAddCurrency(t *testing.T) {
 	var email string = "michal.kukla@tul.cz"
 	var wrongEmail string = "sdkfafa@skdafj.cz"
 	setDefaultUser(userDir, email)
-	var user User
-	ReadJsonFile(userDir, email, &user)
+
 	tests := []struct {
 		email    string
 		coinCode string
@@ -94,8 +103,7 @@ func TestAddCurrency(t *testing.T) {
 	}
 
 	var exp string = "EUR"
-	ReadJsonFile(userDir, email, &user)
-	for _, coinCode := range user.CoinCodes {
+	for _, coinCode := range GetUserCoinCodes(email) {
 		if coinCode == exp {
 			return
 		}
