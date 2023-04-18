@@ -1,8 +1,8 @@
 package sti2023
 
 import (
-	"net/smtp"
 	"fmt"
+	"net/smtp"
 )
 
 type configMail struct {
