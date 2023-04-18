@@ -7,8 +7,8 @@ import (
 type configMail struct {
 	SmtpHost string `json:"smtpHost"`
 	SmtpPort string `json:"smtpPort"`
-	SmtpUser string `json:"smptUser"`
-	SmtpPass string `json:"smptPass"`
+	SmtpUser string `json:"smtpUser"`
+	SmtpPass string `json:"smtpPass"`
 }
 var c configMail
 var mailFile string = "mail.json"
