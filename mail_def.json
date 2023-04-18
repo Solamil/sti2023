@@ -1,0 +1,6 @@
+{
+	"smtpServer":"smtp.purelymail.com",
+	"smtpPort":"587",
+	"smtpUser":"example@purelymail.com",
+	"smtpPass":"123456789",
+}

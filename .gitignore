@@ -25,5 +25,6 @@ test-cache/
 cache/
 users/
 c.out
+mail.json
 cover.out
 cover.html
