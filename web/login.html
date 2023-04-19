@@ -35,9 +35,9 @@ footer{	margin-top: 2em;
 
 		<form action="/" method="GET" class="form" id="signup_form" style="margin-left: 5px">
 			<br>
-			<input type="email" name="email" class="value" id="email" placeholder="emailová adresa">
+			<input type="email" id="email" class="value" name="email" pattern=".+@.+" size="30" placeholder="emailová adresa" required>
 			<br>
-			<input type="password" placeholder="heslo" class="value" id="password">
+			<input type="password" id="password" placeholder="heslo" class="value" id="password" required>
 			<br>
 			<input type="text" name="code" id="code" class="value" placeholder="ověřovací kód">
 			<br>
