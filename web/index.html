@@ -35,46 +35,52 @@ footer{	margin-top: 2em;
 </style>
 </head>
 <body>
-	<div style="text-align:center">
+	<nav style="text-align:center">
 		<h3 style="display: inline-block">Uživatel: {{.User}}</h3>
 		<form action="/logout" method="GET" class="form" id="location_form"
 			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
 			<input type="button" id="button" value="Odhlásit se"/>
 		</form>
-	</div>
-	<p>{{.InfoText}}</p>
+	</nav>
+	<hr>
+	<p style="text-align:center;">{{.InfoText}}</p>
 	<main>
-		<h3>Přidat měnový účet</h3>
-		<form action="/" method="GET" class="form" id="location_form"
-			style="display:block; margin-left: 5px; margin-bottom: 0px">
-			<select name="currencies" id="select_lang">
-				{{.AddCurrency}}
-			</select>
-			<input type="button" id="button" value="Přidat"/>
-		</form>
-		<br>
-		<h3>Vytvořit platbu</h3>
-		<form action="/pay" method="GET" class="form" id="location_form"
-			style="display:block; margin-left: 5px; margin-bottom: 0px">
-			<select name="accounts" id="select_lang">
-				{{.UserCoinCodes}}
-			</select>
-			<input type="number" value="0" step="1" >
-			<input type="button" id="button" value="Pokračovat"/>
-		</form>
-		<br>
-		
-		<h3>Měnový účty</h3>
-		<div id="accounts" style="text-align:center">
-			{{.Accounts}}
-			<p style="display: inline-block"><span id="first_date"></span></p>
-			<p style="display: inline-block"><span id="second_date"></span></p>
+		<div style="text-align:center">
+			<h3 style="display: inline-block">Přidat měnový účet</h3>
+			<form action="/" method="GET" class="form" id="location_form"
+				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+				<select name="currencies" id="select_lang">
+					{{.AddCurrency}}
+				</select>
+				<input type="button" id="button" value="Přidat"/>
+			</form>
+
 		</div>
-		<h3>Mock tlačítko</h3>
+		<div style="text-align: center">
+			<h3 style="display: inline-block">Vytvořit platbu</h3>
+			<form action="/pay" method="GET" class="form" id="location_form"
+				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+				<select name="accounts" id="select_lang">
+					{{.UserCoinCodes}}
+				</select>
+				<input type="number" value="0" step="1" >
+				<input type="button" id="button" value="Pokračovat"/>
+			</form>
+		</div>
+		
+		<div style="text-align: center">
+			<h3 style="display: inline-block">Měnový účty</h3>
+			<div id="accounts" style="display: inline-block; text-align:center">
+				{{.Accounts}}
+			</div>
+		</div>
+		<div style="text-align: center">
+		<h3 style="display: inline-block">Mock tlačítko</h3>
 		<form action="/pay" method="GET" class="form" id="location_form"
-			style="display:block; margin-left: 5px; margin-bottom: 0px">
+			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
 			<input type="button" id="button" value="Mock"/>
 		</form>
+		</div>
 		<h3>Zaúčtované platby</h3>
 		<div id="payments">
 			{{.Payments}}
