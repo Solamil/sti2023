@@ -28,7 +28,7 @@ var user User
 
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
 
-	index := getIndex(GetUserCoinCodes(email), coinCode)
+	index := GetIndex(GetUserCoinCodes(email), coinCode)
 	if index < 0 || total <= 0 {
 		return false
 	}
@@ -63,7 +63,7 @@ func AddCurrency(email string, code string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
 	}
-	if index := getIndex(GetUserCoinCodes(email), code); index > 0 {
+	if index := GetIndex(GetUserCoinCodes(email), code); index > 0 {
 		return false
 	}
 	if !IsExistCode(code) {
@@ -77,7 +77,7 @@ func AddCurrency(email string, code string) bool {
 
 func GetBalance(email string, code string) string {
 	var result string = ""
-	var index int = getIndex(GetUserCoinCodes(email), code)
+	var index int = GetIndex(GetUserCoinCodes(email), code)
 	if index < 0 {
 		return result
 	}
@@ -112,7 +112,7 @@ func AddPayment(email string, balance, total float64, direction, coinCode string
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
 	}
-	index := getIndex(GetUserCoinCodes(email), coinCode)
+	index := GetIndex(GetUserCoinCodes(email), coinCode)
 	strTotal := fmt.Sprintf("%.2f", total)
 	strBalance := fmt.Sprintf("%.2f", balance)
 	user.Balances[index] = strBalance
