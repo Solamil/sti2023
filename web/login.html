@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{	max-width:300px; margin: auto;}
+body{	max-width:400px; margin: auto;}
 a{	text-decoration:none}
 ul li a:hover{color: gray}
 ul li{	display: inline-block; text-decoration: underline; margin: 10px; }
@@ -33,15 +33,15 @@ footer{	margin-top: 2em;
 	<p>{{.InfoText}}</p>
 	<main>
 
-		<form action="/" method="GET" class="form" id="signup_form" style="margin-left: 5px">
+		<form action="/login" method="GET" class="form" id="login_form" style="margin-left: 5px">
 			<br>
-			<input type="email" id="email" class="value" name="email" pattern=".+@.+" size="30" placeholder="emailová adresa" required>
+			<input type="email" id="email" class="value" name="email" pattern=".+@.+" size="30" placeholder="Emailová adresa" required>
 			<br>
-			<input type="password" id="password" placeholder="heslo" class="value" id="password" required>
+			<input type="password" id="password" placeholder="Heslo" class="value" id="password" size="30" required>
 			<br>
-			<input type="text" name="code" id="code" class="value" placeholder="ověřovací kód">
+			<input type="text" name="code" id="code" class="value" size="30" placeholder="Ověřovací kód">
 			<br>
-			<input type="button" id="button" value="Přihlásit se" style="font-size: 20px; margin-left: 10px;"/>
+			<input type="button" id="button" form="login_form" value="Přihlásit se" style="font-size: 20px; margin: 20px;"/>
 		</form>	
 
 	</main>

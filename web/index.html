@@ -37,34 +37,42 @@ footer{	margin-top: 2em;
 <body>
 	<nav style="text-align:center">
 		<h3 style="display: inline-block">Uživatel: {{.User}}</h3>
-		<form action="/logout" method="GET" class="form" id="location_form"
+		<form action="/logout" method="GET" id="nav_form"
 			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
-			<input type="button" id="button" value="Odhlásit se"/>
+			<input type="button" id="button_logout" form="nav_form" value="Odhlásit se"/>
+			<input type="email" name="email" value="{{.EmailAddress}}" style="display: none;" readonly/>
 		</form>
+		<br>
 	</nav>
 	<hr>
 	<p style="text-align:center;">{{.InfoText}}</p>
 	<main>
 		<div style="text-align:center">
 			<h3 style="display: inline-block">Přidat měnový účet</h3>
-			<form action="/" method="GET" class="form" id="location_form"
+			<form action="/accounts" method="GET" id="account_form"
 				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
-				<select name="currencies" id="select_lang">
+				<select name="currencies" id="select_coin">
 					{{.AddCurrency}}
 				</select>
-				<input type="button" id="button" value="Přidat"/>
+				<input type="submit" id="button_account" form="account_form" value="Přidat"/>
+				<input type="email" name="email" value="{{.EmailAddress}}" style="display: none;" readonly/>
 			</form>
 
 		</div>
 		<div style="text-align: center">
 			<h3 style="display: inline-block">Vytvořit platbu</h3>
-			<form action="/pay" method="GET" class="form" id="location_form"
+			<form action="/pay" method="GET" id="payment_form"
 				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
-				<select name="accounts" id="select_lang">
+				<input type="number" id="total" name="total" placeholder="1.0" min="0.1" step="1" size=10/>
+				<select name="accounts" id="select_coin">
 					{{.UserCoinCodes}}
 				</select>
-				<input type="number" value="0" step="1" >
-				<input type="button" id="button" value="Pokračovat"/>
+				<select name="payment_type" id="payment_type">
+					<option value="IN">Příchozí platba</option>
+					<option value="OUT">Odchozí platba</option>
+				</select>
+				<input type="submit" form="payment_form" id="button_pay" value="Pokračovat"/>
+				<input type="email" name="email" value="{{.EmailAddress}}" style="display: none;" readonly/>
 			</form>
 		</div>
 		
@@ -76,9 +84,10 @@ footer{	margin-top: 2em;
 		</div>
 		<div style="text-align: center">
 		<h3 style="display: inline-block">Mock tlačítko</h3>
-		<form action="/pay" method="GET" class="form" id="location_form"
+		<form action="/mock" method="GET" id="mock_form"
 			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
-			<input type="button" id="button" value="Mock"/>
+			<input type="submit" id="button_mock" form="mock_form" value="Mock"/>
+			<input type="email" name="email" value="{{.EmailAddress}}" style="display: none;" readonly/>
 		</form>
 		</div>
 		<h3>Zaúčtované platby</h3>
