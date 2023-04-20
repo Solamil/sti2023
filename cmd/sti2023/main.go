@@ -127,16 +127,17 @@ func getPaymentsHTML(email string) string {
 	totals := sti2023.GetPaymentTotal(email)		
 	directions := sti2023.GetPaymentDirection(email)
 	coinCodes := sti2023.GetPaymentCoinCode(email)
-	for i := range totals {
-		if len(directions) <= i || len(coinCodes) <= i {
-			break
-		}
+	if len(totals) != len(directions) || len(totals) != len(coinCodes) {
+		return result
+	}
+	for i := len(totals)-1; i >= 0; i-- {
 		if directions[i] == "in" {
 			directions[i] = "+"
 		}else if directions[i] == "out" {
 			directions[i] = "-"
 		}
 		result = fmt.Sprintf("%s<h4 style=\"display: inline-block; margin: 10px;\">%s%s %s</h4>\n", result, directions[i], totals[i], coinCodes[i])
+
 	}
 	return result
 }
