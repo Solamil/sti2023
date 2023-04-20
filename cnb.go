@@ -75,7 +75,7 @@ func IsExistCode(coinCode string) bool {
 	return true
 }
 
-func GetCoinCodes() []string{
+func GetCoinCodes() []string {
 	var rates Rates
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return []string{}

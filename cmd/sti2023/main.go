@@ -29,7 +29,7 @@ func main(){
 	generateCode()
 
 	//sti2023.WriteCode(email, "sdfa")
-	//mockButton(email)
+	mockButton(email)
 	//sti2023.CurrencyRates()
 	//sti2023.CreatePayment(email, 20.0, "in", "GBP")
 	//fmt.Println(sti2023.GetBalances(email))
@@ -127,7 +127,7 @@ func getPaymentsHTML(email string) string {
 	totals := sti2023.GetPaymentTotal(email)		
 	directions := sti2023.GetPaymentDirection(email)
 	coinCodes := sti2023.GetPaymentCoinCode(email)
-	for i, _ := range totals {
+	for i := range totals {
 		if len(directions) <= i || len(coinCodes) <= i {
 			break
 		}
