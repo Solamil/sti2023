@@ -48,7 +48,7 @@ func GetCurrencyRate(coinCode string) []string {
 	updateCurrency()
 	var rates Rates
 	ReadJsonFile(cnbDir, cnbFilename, &rates)
-	var index int = getIndex(rates.Code, coinCode)
+	var index int = GetIndex(rates.Code, coinCode)
 	if index < 0 {
 		return result
 	}
@@ -69,10 +69,18 @@ func IsExistCode(coinCode string) bool {
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return false
 	}
-	if i := getIndex(rates.Code, coinCode); i < 0 {
+	if i := GetIndex(rates.Code, coinCode); i < 0 {
 		return false
 	}
 	return true
+}
+
+func GetCoinCodes() []string {
+	var rates Rates
+	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
+		return []string{}
+	}
+	return rates.Code
 }
 
 func updateCurrency() {
@@ -104,7 +112,7 @@ func CurrencyRates() {
 	updated = time.Now()
 }
 
-func getIndex(array []string, value string) int {
+func GetIndex(array []string, value string) int {
 	var index int = -1
 	for i, v := range array {
 		if value == v {

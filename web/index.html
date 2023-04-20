@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>IS pro banku</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:800px; margin: auto;}
+a{	text-decoration:none}
+ul li a:hover{color: gray}
+ul li{	display: inline-block; text-decoration: underline; margin: 10px; }
+.value{	margin: 10px 10px 10px 0px; 
+	padding: 0px 0px 0px 2px;
+	border-radius:0px;
+	border: solid;
+	font-size: 20px;
+	border-width: 0px 0px 1px 0px; 
+	text-decoration: none;
+	background:transparent;
+	outline: none;
+}
+input,select{
+	margin: 10px;
+}
+form{
+	text-align: center;
+}
+h2, h3{	text-align: center; text-decoration: underline;	}
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	border: solid;
+	border-width: 2px 0px 0px 0px;
+}
+</style>
+</head>
+<body>
+	<nav style="text-align:center">
+		<h3 style="display: inline-block">Uživatel: {{.User}}</h3>
+		<form action="/logout" method="GET" class="form" id="location_form"
+			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
+			<input type="button" id="button" value="Odhlásit se"/>
+		</form>
+	</nav>
+	<hr>
+	<p style="text-align:center;">{{.InfoText}}</p>
+	<main>
+		<div style="text-align:center">
+			<h3 style="display: inline-block">Přidat měnový účet</h3>
+			<form action="/" method="GET" class="form" id="location_form"
+				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+				<select name="currencies" id="select_lang">
+					{{.AddCurrency}}
+				</select>
+				<input type="button" id="button" value="Přidat"/>
+			</form>
+
+		</div>
+		<div style="text-align: center">
+			<h3 style="display: inline-block">Vytvořit platbu</h3>
+			<form action="/pay" method="GET" class="form" id="location_form"
+				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+				<select name="accounts" id="select_lang">
+					{{.UserCoinCodes}}
+				</select>
+				<input type="number" value="0" step="1" >
+				<input type="button" id="button" value="Pokračovat"/>
+			</form>
+		</div>
+		
+		<div style="text-align: center">
+			<h3 style="display: inline-block">Měnový účty</h3>
+			<div id="accounts" style="display: inline-block; text-align:center">
+				{{.Accounts}}
+			</div>
+		</div>
+		<div style="text-align: center">
+		<h3 style="display: inline-block">Mock tlačítko</h3>
+		<form action="/pay" method="GET" class="form" id="location_form"
+			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
+			<input type="button" id="button" value="Mock"/>
+		</form>
+		</div>
+		<h3>Zaúčtované platby</h3>
+		<div id="payments">
+			{{.Payments}}
+		</div>
+	</main>
+	<footer>
+		<p>Michal Kukla</p>
+		<p><a href="https://github.com/Solamil/sti2023" style="text-decoration: underline" target="_blank">Github</a>
+	</footer>
+</body>
+</html>
