@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"net/mail"
 	"math/rand"
 	"time"
 	//	"io"
@@ -140,6 +141,14 @@ func getPaymentsHTML(email string) string {
 
 	}
 	return result
+}
+
+func validMailAddress(address string) (string, bool) {
+    addr, err := mail.ParseAddress(address)
+    if err != nil {
+        return "", false
+    }
+    return addr.Address, true
 }
 
 func getHTMLOptionTag(value, symbol string) string {
