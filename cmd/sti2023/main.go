@@ -13,6 +13,7 @@ import (
 )
 
 type indexDisplay struct {
+	EmailAddress   string
 	InfoText       string
 	User	       string
 	AddCurrency    string
@@ -22,7 +23,6 @@ type indexDisplay struct {
 }
 var indexTemplate *template.Template
 
-var email string = "michal.kukla@tul.cz"
 
 
 func main(){
@@ -30,22 +30,28 @@ func main(){
 	generateCode()
 
 	//sti2023.WriteCode(email, "sdfa")
-	mockButton(email)
+	//mockButton(email)
 	//sti2023.CurrencyRates()
 	//sti2023.CreatePayment(email, 20.0, "in", "GBP")
 	//fmt.Println(sti2023.GetBalances(email))
 	//sti2023.AddCurrency(email, "GBP")
-	http.HandleFunc("/", index_handler)
 	http.HandleFunc("/index.html", index_handler)
+	http.HandleFunc("/accounts", accounts_handler)
+	http.HandleFunc("/mock", mock_handler)
+	http.HandleFunc("/pay", pay_handler)
+	http.HandleFunc("/", index_handler)
+
 	http.ListenAndServe(":8904", nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
+	var email string = "michal.kukla@tul.cz"
 
 	user := sti2023.GetNames(email)
 	firstname := user[0]
 	lastname := user[1]
 	var i indexDisplay
+	i.EmailAddress = email
 	i.InfoText = ""
 	i.User = firstname+" "+lastname
 	i.AddCurrency = getAddCurrencyHTML(email)
@@ -54,6 +60,28 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.Payments = getPaymentsHTML(email)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
+}
+
+func pay_handler(w http.ResponseWriter, r *http.Request) {
+	//total := r.FormValue("total")
+	//direction := r.FormValue("payment_type")
+	//coin := r.FormValue("accounts")
+	//email := r.FormValue("email")
+	//sti2023.CreatePayment(email, total, direction, coin)
+}
+
+func mock_handler(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	mockButton(email)
+	//fmt.Println(r.FormValue("email"))
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func accounts_handler(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	coin := r.FormValue("currencies")
+	sti2023.AddCurrency(email, coin)	
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func mockButton(email string) bool {
