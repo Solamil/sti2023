@@ -27,36 +27,43 @@ var userDir string = "users"
 var user User
 
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
+	var balance float64 = 0.0
+	if PreparePayment(email, &balance, &total, &direction, &coinCode) {
+		return AddPayment(email, balance, total, direction, coinCode)
+	}
+	return false
+}
 
-	index := GetIndex(GetUserCoinCodes(email), coinCode)
-	if index < 0 || total <= 0 {
+func PreparePayment(email string, balance, total *float64, direction *string, coinCode *string) bool {
+	index := GetIndex(GetUserCoinCodes(email), *coinCode)
+	if index < 0 || *total <= 0 {
 		return false
 	}
 
 	balances := GetBalances(email)
-	balance, _ := strconv.ParseFloat(balances[index], 64)
+	*balance, _ = strconv.ParseFloat(balances[index], 64)
 
-	if direction == "in" {
-		balance += total
-	} else if direction == "out" && balance < total {
+	if *direction == "in" {
+		*balance += *total
+	} else if *direction == "out" && *balance < *total {
 
-		valueCzk := GetCurrencySum(total, coinCode)
-		total, _ = strconv.ParseFloat(valueCzk, 64)
+		valueCzk := GetCurrencySum(*total, *coinCode)
+		*total, _ = strconv.ParseFloat(valueCzk, 64)
 		index = 0 // CZK
-		coinCode = "CZK"
-		balance, _ = strconv.ParseFloat(balances[index], 64)
-		fmt.Println(balance)
-		if balance < total {
+		*coinCode = "CZK"
+		*balance, _ = strconv.ParseFloat(balances[index], 64)
+		fmt.Println(*balance)
+		if *balance < *total {
 			return false
 		}
-		balance -= total
+		*balance -= *total
 
-	} else if direction == "out" && balance >= total {
-		balance -= total
+	} else if *direction == "out" && *balance >= *total {
+		*balance -= *total
 	} else {
 		return false
 	}
-	return AddPayment(email, balance, total, direction, coinCode)
+	return true
 }
 
 func AddCurrency(email string, code string) bool {
