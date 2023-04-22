@@ -105,16 +105,16 @@ func TestPreparePayment(t *testing.T) {
 
 	WriteJsonFile(userDir, email, user)
 	tests := []struct {
-		email     	string
-		balance		float64
-		total     	float64
-		direction 	string
-		coinCode  	string
-		exp       	bool
-		expBalance	float64
-		expTotal  	float64
-		expDirection 	string
-		expCoinCode	string
+		email        string
+		balance      float64
+		total        float64
+		direction    string
+		coinCode     string
+		exp          bool
+		expBalance   float64
+		expTotal     float64
+		expDirection string
+		expCoinCode  string
 	}{
 
 		{email, 0.0, 140.0, "IN", "CZK", true, 280.0, 140.0, "IN", "CZK"},
@@ -130,14 +130,13 @@ func TestPreparePayment(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := PreparePayment(test.email, &test.balance, &test.total, &test.direction, &test.coinCode); 
-		test.exp != got ||
-		test.total != test.expTotal || test.direction != test.expDirection || test.coinCode != test.expCoinCode {
+		if got := PreparePayment(test.email, &test.balance, &test.total, &test.direction, &test.coinCode); test.exp != got ||
+			test.total != test.expTotal || test.direction != test.expDirection || test.coinCode != test.expCoinCode {
 			t.Errorf(`Expected '%t' but, got '%t',
 			Got: %.2f, %.2f, %s, %s,
-			Expected: %.2f, %.2f, %s, %s`, test.exp, got, 
-			test.balance, test.total, test.direction, test.coinCode,
-			test.expBalance, test.expTotal, test.expDirection, test.expCoinCode)
+			Expected: %.2f, %.2f, %s, %s`, test.exp, got,
+				test.balance, test.total, test.direction, test.coinCode,
+				test.expBalance, test.expTotal, test.expDirection, test.expCoinCode)
 		}
 	}
 }
