@@ -5,26 +5,25 @@ import (
 	"net/smtp"
 )
 
-type configMail struct {
+type ConfigMail struct {
 	SmtpHost string `json:"smtpHost"`
 	SmtpPort string `json:"smtpPort"`
 	SmtpUser string `json:"smtpUser"`
 	SmtpPass string `json:"smtpPass"`
 }
 
-var c configMail
-var mailFile string = "mail.json"
+var c ConfigMail
 
-func Mail(mail string, code string) bool {
-	c.SmtpHost = "michalkukla.xyz"
+func Mail(email string, code string) bool {
+	c.SmtpHost = "mail.michalkukla.xyz"
 	c.SmtpPort = "587"
 	c.SmtpUser = "michal@michalkukla.xyz"
 	c.SmtpPass = ""
 
-	if !ReadJsonFile("./", mailFile, &c) {
+	if !ReadJsonFile("./", "mail", &c) {
 		return false
 	}
-	sendTo := []string{mail}
+	sendTo := []string{email}
 	body := []byte(fmt.Sprintf("From: %s\n"+
 		"Ověřovací kód do semestrálního projektu\n\n"+
 		"%s", c.SmtpUser, code))
