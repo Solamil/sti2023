@@ -36,16 +36,16 @@ func TestCreatePayment(t *testing.T) {
 		exp       bool
 	}{
 
-		{email, 140.0, "in", "CZK", true},
-		{email, 1.25, "in", "GBP", true},
-		{email, 2.0, "out", "GBP", true},
-		{email, 1.25, "out", "GBP", true},
-		{email, 86.29, "out", "CZK", true},
+		{email, 140.0, "IN", "CZK", true},
+		{email, 1.25, "IN", "GBP", true},
+		{email, 2.0, "OUT", "GBP", true},
+		{email, 1.25, "OUT", "GBP", true},
+		{email, 86.29, "OUT", "CZK", true},
 
-		{email, 10.0, "out", "GBP", false},
-		{wrongEmail, 20.0, "in", "CZK", false},
-		{email, 20.0, "out", "ABC", false},
-		{email, 0.0, "in", "CZK", false},
+		{email, 10.0, "OUT", "GBP", false},
+		{wrongEmail, 20.0, "IN", "CZK", false},
+		{email, 20.0, "OUT", "ABC", false},
+		{email, 0.0, "IN", "CZK", false},
 	}
 
 	for _, test := range tests {
@@ -72,6 +72,71 @@ func TestCreatePayment(t *testing.T) {
 		if balance != exp {
 			t.Errorf("Expected '%s' but, got '%s'", exp, balance)
 
+		}
+	}
+}
+
+func TestPreparePayment(t *testing.T) {
+	userDir = "test-cache"
+	cnbDir = "test-cache"
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		file, err := os.Open("test-data/devizovy_trh.json")
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer file.Close()
+		byteRates, _ := io.ReadAll(file)
+		w.Write(byteRates)
+	}))
+	cnbUrl = ts.URL
+
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	var user User
+	user.Password = "37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578"
+	user.Balances = append(user.Balances, "140.0")
+	user.CoinCodes = append(user.CoinCodes, "CZK")
+	user.Balances = append(user.Balances, "1.25")
+	user.CoinCodes = append(user.CoinCodes, "GBP")
+	user.FirstName = "Michal"
+	user.LastName = "Kukla"
+
+	WriteJsonFile(userDir, email, user)
+	tests := []struct {
+		email        string
+		balance      float64
+		total        float64
+		direction    string
+		coinCode     string
+		exp          bool
+		expBalance   float64
+		expTotal     float64
+		expDirection string
+		expCoinCode  string
+	}{
+
+		{email, 0.0, 140.0, "IN", "CZK", true, 280.0, 140.0, "IN", "CZK"},
+		{email, 0.0, 1.25, "IN", "GBP", true, 2.5, 1.25, "IN", "GBP"},
+		{email, 0.0, 2.0, "OUT", "GBP", true, 86.29, 53.71, "OUT", "CZK"},
+		{email, 0.0, 1.25, "OUT", "GBP", true, 0.0, 1.25, "OUT", "GBP"},
+		{email, 0.0, 86.29, "OUT", "CZK", true, 53.71, 86.29, "OUT", "CZK"},
+
+		{email, 0.0, 10.0, "OUT", "GBP", false, 140.0, 268.56, "OUT", "CZK"},
+		{wrongEmail, 0.0, 20.0, "IN", "CZK", false, 0.0, 20.0, "IN", "CZK"},
+		{email, 0.0, 20.0, "OUT", "ABC", false, 0.0, 20.0, "OUT", "ABC"},
+		{email, 0.0, 0.0, "IN", "CZK", false, 0.0, 0.0, "IN", "CZK"},
+	}
+
+	for _, test := range tests {
+		if got := PreparePayment(test.email, &test.balance, &test.total, &test.direction, &test.coinCode); test.exp != got ||
+			test.total != test.expTotal || test.direction != test.expDirection || test.coinCode != test.expCoinCode {
+			t.Errorf(`Expected '%t' but, got '%t',
+			Got: %.2f, %.2f, %s, %s,
+			Expected: %.2f, %.2f, %s, %s`, test.exp, got,
+				test.balance, test.total, test.direction, test.coinCode,
+				test.expBalance, test.expTotal, test.expDirection, test.expCoinCode)
 		}
 	}
 }
