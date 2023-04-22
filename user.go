@@ -29,6 +29,7 @@ var user User
 
 func CreatePayment(email string, total float64, direction string, coinCode string) bool {
 	var balance float64 = 0.0
+
 	if PreparePayment(email, &balance, &total, &direction, &coinCode) {
 		return AddPayment(email, balance, total, direction, coinCode)
 	}
@@ -37,7 +38,7 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 
 func PreparePayment(email string, balance, total *float64, direction *string, coinCode *string) bool {
 	index := GetIndex(GetUserCoinCodes(email), *coinCode)
-	if index < 0 || *total <= 0 {
+	if index < 0 || *total <= 0.0 {
 		return false
 	}
 
