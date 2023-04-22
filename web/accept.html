@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Potvrzení platby</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:800px; margin: auto;}
+a{	text-decoration:none}
+ul li a:hover{color: gray}
+ul li{	display: inline-block; text-decoration: underline; margin: 10px; }
+input,select{
+	margin: 10px;
+}
+h2, h3{	text-align: center; text-decoration: underline;	}
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	border: solid;
+	border-width: 2px 0px 0px 0px;
+}
+</style>
+</head>
+<body>
+	<h3>Potvrzení platby</h3>
+	<hr>
+	<p style="text-align: center;">{{.InfoText}}</p>
+	<main style="text-align: center;">
+
+		<form action="/" method="GET" id="cancel_form" style="display: inline-block">
+		<input type="submit" id="button_cancel" form="cancel_form" value="Zrušit"/>
+		</form>
+		<form action="/pay" method="GET" id="payment_form"
+			style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+			<input type="email" name="email" value="{{.EmailAddress}}" readonly/>
+			<input type="number" id="total" name="total" value="{{.PayTotal}}" size=10 readonly/>
+			<select name="accounts" id="select_coin" readonly>
+				{{.PayCoinCode}}
+			</select>
+			<select name="payment_type" id="payment_type" readonly>
+				{{.PayDirection}}
+			</select>
+			<input type="submit" form="payment_form" id="button_pay" value="Potvrdit"/>
+		</form>
+
+	</main>
+	<footer>
+		<p>Michal Kukla</p>
+		<p><a href="https://github.com/Solamil/sti2023" style="text-decoration: underline" target="_blank">Github</a>
+	</footer>
+</body>
+</html>
