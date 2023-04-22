@@ -3,6 +3,7 @@ package sti2023
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -43,9 +44,9 @@ func PreparePayment(email string, balance, total *float64, direction *string, co
 	balances := GetBalances(email)
 	*balance, _ = strconv.ParseFloat(balances[index], 64)
 
-	if *direction == "in" {
+	if strings.EqualFold(*direction, "IN") {
 		*balance += *total
-	} else if *direction == "out" && *balance < *total {
+	} else if strings.EqualFold(*direction, "OUT") && *balance < *total {
 
 		valueCzk := GetCurrencySum(*total, *coinCode)
 		*total, _ = strconv.ParseFloat(valueCzk, 64)
@@ -58,7 +59,7 @@ func PreparePayment(email string, balance, total *float64, direction *string, co
 		}
 		*balance -= *total
 
-	} else if *direction == "out" && *balance >= *total {
+	} else if strings.EqualFold(*direction, "OUT") && *balance >= *total {
 		*balance -= *total
 	} else {
 		return false
