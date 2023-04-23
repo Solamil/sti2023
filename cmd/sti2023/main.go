@@ -22,7 +22,16 @@ type indexDisplay struct {
 	Accounts       string
 	Payments       string
 }
+
+type acceptDisplay struct {
+	EmailAddress   	string
+	InfoText       	string
+	PayTotal	string
+	PayCoinCode  	string
+	PayDirection 	string
+}
 var indexTemplate *template.Template
+var acceptTemplate *template.Template
 
 
 
@@ -47,13 +56,49 @@ func main(){
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
 	var email string = "michal.kukla@tul.cz"
+	
+	var info string = ""
+	fmt.Println(r.URL.Path)
+	if r.URL.Path == "/accept" {
+		email := r.FormValue("email")
+		totalStr := r.FormValue("total")
+		total, _ := strconv.ParseFloat(totalStr, 64)
+		direction := r.FormValue("payment_type")
+		coinCode := r.FormValue("accounts")
+		coinCodePrev := coinCode
+		var balance float64 = 0.0
+		if sti2023.PreparePayment(email, &balance, &total, &direction, &coinCode) {
+			var i acceptDisplay
+			i.EmailAddress = email 
+			i.PayTotal = fmt.Sprintf("%.2f", total) 
+			i.InfoText = ""
+			if strings.EqualFold(direction, "IN") {
+				i.PayDirection = getHTMLOptionTag(direction, "Příchozí platba")
+
+			} else if strings.EqualFold(direction, "OUT") {
+				i.PayDirection = getHTMLOptionTag(direction, "Odchozí platba")
+			}
+			if strings.EqualFold(coinCode, "CZK") && !strings.EqualFold(coinCodePrev, "CZK") {
+				rate := sti2023.GetCurrencyRate(coinCodePrev)
+				date := sti2023.GetDate()
+				i.InfoText = fmt.Sprintf("%s: %s%s %sKč", date, rate[1], coinCodePrev, rate[0])
+			}
+			i.PayCoinCode = getHTMLOptionTag(coinCode, coinCode) 
+			acceptTemplate, _ = template.ParseFiles("web/accept.html")
+			acceptTemplate.Execute(w, i)
+			return
+		} else {
+			info = "Platba se nepodařila provést z důvodu nízkého zůstatku na účtech."
+		}
+
+	}
 
 	user := sti2023.GetNames(email)
 	firstname := user[0]
 	lastname := user[1]
 	var i indexDisplay
 	i.EmailAddress = email
-	i.InfoText = ""
+	i.InfoText = info
 	i.User = firstname+" "+lastname
 	i.AddCurrency = getAddCurrencyHTML(email)
 	i.UserCoinCodes = getUserCoinCodesHTML(email)
@@ -64,17 +109,24 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func pay_handler(w http.ResponseWriter, r *http.Request) {
-	//total := r.FormValue("total")
-	//direction := r.FormValue("payment_type")
-	//coin := r.FormValue("accounts")
-	//email := r.FormValue("email")
-	//sti2023.CreatePayment(email, total, direction, coin)
+	total, _ := strconv.ParseFloat(r.FormValue("total"), 64)
+	direction := r.FormValue("payment_type")
+	coinCode := r.FormValue("accounts")
+	email := r.FormValue("email")
+	if !sti2023.CreatePayment(email, total, direction, coinCode) {
+		var i acceptDisplay
+		i.InfoText = "Platba se nezdařila."
+		i.PayTotal = fmt.Sprintf("%.2f", total)
+		i.PayDirection = direction
+		i.PayCoinCode = coinCode
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func mock_handler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	mockButton(email)
-	//fmt.Println(r.FormValue("email"))
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
