@@ -7,6 +7,7 @@ import (
 	"net/mail"
 	"math/rand"
 	"time"
+	"strings"
 	//	"io"
 	"text/template"
 	"github.com/Solamil/sti2023"
@@ -160,9 +161,9 @@ func getPaymentsHTML(email string) string {
 		return result
 	}
 	for i := len(totals)-1; i >= 0; i-- {
-		if directions[i] == "in" {
+		if strings.EqualFold(directions[i], "IN") {
 			directions[i] = "+"
-		}else if directions[i] == "out" {
+		}else if strings.EqualFold(directions[i], "out") {
 			directions[i] = "-"
 		}
 		result = fmt.Sprintf("%s<h4 style=\"display: inline-block; margin: 10px;\">%s%s %s</h4>\n", result, directions[i], totals[i], coinCodes[i])
