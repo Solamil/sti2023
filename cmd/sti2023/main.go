@@ -21,6 +21,9 @@ type indexDisplay struct {
 	Accounts       string
 	Payments       string
 }
+type loginDisplay struct {
+	InfoText string
+}
 
 type acceptDisplay struct {
 	EmailAddress   	string
@@ -31,6 +34,7 @@ type acceptDisplay struct {
 }
 var indexTemplate *template.Template
 var acceptTemplate *template.Template
+var loginTemplate *template.Template
 
 
 
@@ -48,6 +52,7 @@ func main(){
 	http.HandleFunc("/accounts", accounts_handler)
 	http.HandleFunc("/mock", mock_handler)
 	http.HandleFunc("/pay", pay_handler)
+	http.HandleFunc("/login", login_handler)
 	http.HandleFunc("/", index_handler)
 
 	http.ListenAndServe(":8904", nil)
@@ -105,6 +110,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.Payments = getPaymentsHTML(email)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
+}
+
+func login_handler(w http.ResponseWriter, r *http.Request) {
+		
 }
 
 func pay_handler(w http.ResponseWriter, r *http.Request) {
