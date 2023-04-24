@@ -237,6 +237,35 @@ func TestVerifyCode(t *testing.T) {
 	}
 }
 
+func TestIsCodeUptodate(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+	tests := []struct {
+		email string
+		code  string
+		exp   bool
+	}{
+		{wrongEmail, "testtest", false},
+		{email, "", true},
+		{email, "testtest", true},
+	}
+
+	// Test empty string for the start
+	if got := IsCodeUptodate(email); got {
+		t.Errorf("Expected '%t' but, got '%t',\n %s %s", false,
+			got, email, "")
+	}
+	for _, test := range tests {
+		WriteCode(test.email, test.code)
+		if got := IsCodeUptodate(test.email); test.exp != got {
+			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
+				got, test.email, test.code)
+		}
+	}
+}
+
 func TestCleanUpCache1(t *testing.T) {
 	var cache_dir string = "test-cache"
 	dirRead, _ := os.Open(cache_dir)
