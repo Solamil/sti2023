@@ -139,7 +139,7 @@ func CheckPassword(email, value string) bool {
 	return user.Password == password
 }
 
-func CheckCode(email, code string) bool {
+func IsCodeUptodate(email string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
 	}
@@ -147,9 +147,20 @@ func CheckCode(email, code string) bool {
 	now := time.Now()
 	expiry, err := time.Parse(time.RFC3339, user.SecondAuth.Expiry)
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		return false
 	}
-	if (expiry.After(now) && user.SecondAuth.Code != "" && user.SecondAuth.Code == code) || user.SecondAuth.Code == "" {
+	if expiry.After(now) {
+		return true
+	}
+	return false
+}
+
+func CheckCode(email, code string) bool {
+	if !ReadJsonFile(userDir, email, &user) {
+		return false
+	}
+	if user.SecondAuth.Code == code {
 		return true
 	}
 	return false
