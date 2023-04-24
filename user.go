@@ -47,15 +47,14 @@ func PreparePayment(email string, balance, total *float64, direction *string, co
 
 	if strings.EqualFold(*direction, "IN") {
 		*balance += *total
-	} else if strings.EqualFold(*direction, "OUT") && *balance < *total {
+	} else if strings.EqualFold(*direction, "OUT") && *balance < *total && !strings.EqualFold(*coinCode, "CZK") {
 
 		valueCzk := GetCurrencySum(*total, *coinCode)
 		*total, _ = strconv.ParseFloat(valueCzk, 64)
 		index = 0 // CZK
 		*coinCode = "CZK"
 		*balance, _ = strconv.ParseFloat(balances[index], 64)
-		fmt.Println(*balance)
-		if *balance < *total {
+		if *balance < *total || *total == 0.0 {
 			return false
 		}
 		*balance -= *total

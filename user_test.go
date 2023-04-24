@@ -127,6 +127,7 @@ func TestPreparePayment(t *testing.T) {
 		{wrongEmail, 0.0, 20.0, "IN", "CZK", false, 0.0, 20.0, "IN", "CZK"},
 		{email, 0.0, 20.0, "OUT", "ABC", false, 0.0, 20.0, "OUT", "ABC"},
 		{email, 0.0, 0.0, "IN", "CZK", false, 0.0, 0.0, "IN", "CZK"},
+		{email, 0.0, 400.0, "OUT", "CZK", false, 0.0, 400.0, "OUT", "CZK"},
 	}
 
 	for _, test := range tests {
