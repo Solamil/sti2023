@@ -41,6 +41,7 @@ var loginTemplate *template.Template
 
 func main(){
 	//	fmt.Printf("%x", sti2023.Hash(email))
+	//fmt.Printf("%x", sti2023.Hash("kukla7@email.cz"))
 	generateCode()
 
 	//sti2023.WriteCode(email, "sdfa")
@@ -130,22 +131,32 @@ func login_handler(w http.ResponseWriter, r *http.Request) {
 	if sti2023.CheckPassword(email, password) {
 		password = ""
 		code := r.PostFormValue("code")
-		if sti2023.CheckCode(code) {
+
+		if (code == "" && sti2023.CheckCode(email, "")) || !sti2023.IsCodeUptodate(email) {
+			code := fmt.Sprintf("%d", generateCode())
+			sti2023.WriteCode(email, code)
+			infoText := sendCode(email, code)
+
+			var i loginDisplay
+			i.InfoText = infoText 
+			loginTemplate, _ = template.ParseFiles("web/login.html")
+			loginTemplate.Execute(w, i)
+		} else if code != "" && sti2023.CheckCode(email, code) && sti2023.IsCodeUptodate(email) {
 			sess := session.NewSessionOptions(&session.SessOptions{
 			    CAttrs: map[string]interface{}{"Email": email},
 			})
 			session.Add(sess, w)
 			sti2023.WriteCode(email, "")
 			http.Redirect(w, r, "/", http.StatusFound)
-		} else if sti2023.CheckCode(email, "") {
-			code := generateCode()
-			sti2023.WriteCode(email code)
-			sti2023.SendMail(email, code)
-
+		} else if code != "" && !sti2023.CheckCode(email, code) && !sti2023.IsCodeUptodate(email) {
+			var i loginDisplay
+			i.InfoText = "⚠️Nepodařilo se přihlásit. Zadaný kód není správný."
+			loginTemplate, _ = template.ParseFiles("web/login.html")
+			loginTemplate.Execute(w, i)
 		}
 	} else {
 		var i loginDisplay
-		i.InfoText = "Nepodařilo se přihlásit."
+		i.InfoText = "⚠️Nepodařilo se přihlásit. Heslo nebo emailová adresa není správně."
 		loginTemplate, _ = template.ParseFiles("web/login.html")
 		loginTemplate.Execute(w, i)
 	}
@@ -212,6 +223,17 @@ func mockButton(email string) bool {
 	}
 	total += rand.Float64() 
 	return sti2023.CreatePayment(email, total, direction, coinCode) 
+}
+func sendCode(email, code string) string {
+	var result string = ""
+	if ok := sti2023.Mail(email, code); ok {
+		result = fmt.Sprintf("Na emailovou adresu %s Vám byl zaslán ověřovací kód."+
+				"Upozornění: Zprává se může nacházet ve složce SPAM.", email)
+	} else {
+		result = fmt.Sprintf("Na vaši emailovou adresu %s se nepodařilo zaslat ověřovací kód.",
+					email)
+	}
+	return result
 }
 	
 func generateCode() int {
