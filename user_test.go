@@ -214,15 +214,26 @@ func TestVerifyCode(t *testing.T) {
 	}{
 
 		{wrongEmail, "testtest", false},
-		{email, "", false},
+		{email, "", true},
 		{email, "testtest", true},
 	}
+	// Test empty string for the start
+	if got := CheckCode(email, ""); !got {
+		t.Errorf("Expected '%t' but, got '%t',\n %s %s", true,
+			got, email, "")
+	}
+
 	for _, test := range tests {
 		WriteCode(test.email, test.code)
 		if got := CheckCode(test.email, test.code); test.exp != got {
 			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
 				got, test.email, test.code)
 		}
+	}
+	// Test False
+	if got := CheckCode(email, "fff"); got {
+		t.Errorf("Expected '%t' but, got '%t',\n %s %s", false,
+			got, email, "")
 	}
 }
 

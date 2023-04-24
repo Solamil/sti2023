@@ -149,7 +149,7 @@ func CheckCode(email, code string) bool {
 	if err != nil {
 		fmt.Println(err)
 	}
-	if expiry.After(now) && user.SecondAuth.Code != "" && user.SecondAuth.Code == code {
+	if (expiry.After(now) && user.SecondAuth.Code != "" && user.SecondAuth.Code == code) || user.SecondAuth.Code == "" {
 		return true
 	}
 	return false
