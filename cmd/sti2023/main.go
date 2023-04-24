@@ -9,6 +9,7 @@ import (
 	"strings"
 	//	"io"
 	"text/template"
+	"github.com/icza/session"
 	"github.com/Solamil/sti2023"
 )
 
@@ -53,14 +54,24 @@ func main(){
 	http.HandleFunc("/mock", mock_handler)
 	http.HandleFunc("/pay", pay_handler)
 	http.HandleFunc("/login", login_handler)
+	http.HandleFunc("/logout", logout_handler)
 	http.HandleFunc("/", index_handler)
 
 	http.ListenAndServe(":8904", nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
-	var email string = "michal.kukla@tul.cz"
+	// var email string = "michal.kukla@tul.cz"
 	
+	sess := session.Get(r)
+	if sess == nil {
+		var i loginDisplay
+		i.InfoText = "" 
+		loginTemplate, _ = template.ParseFiles("web/login.html")
+		loginTemplate.Execute(w, i)
+		return
+	}
+	email := sess.CAttr("Email").(string)
 	var info string = ""
 	fmt.Println(r.URL.Path)
 	if r.URL.Path == "/accept" {
@@ -96,7 +107,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
+	
 	user := sti2023.GetNames(email)
 	firstname := user[0]
 	lastname := user[1]
@@ -113,7 +124,43 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func login_handler(w http.ResponseWriter, r *http.Request) {
-		
+
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+	if sti2023.CheckPassword(email, password) {
+		password = ""
+		code := r.PostFormValue("code")
+		if sti2023.CheckCode(code) {
+			sess := session.NewSessionOptions(&session.SessOptions{
+			    CAttrs: map[string]interface{}{"Email": email},
+			})
+			session.Add(sess, w)
+			sti2023.WriteCode(email, "")
+			http.Redirect(w, r, "/", http.StatusFound)
+		} else if sti2023.CheckCode(email, "") {
+			code := generateCode()
+			sti2023.WriteCode(email code)
+			sti2023.SendMail(email, code)
+
+		}
+	} else {
+		var i loginDisplay
+		i.InfoText = "Nepodařilo se přihlásit."
+		loginTemplate, _ = template.ParseFiles("web/login.html")
+		loginTemplate.Execute(w, i)
+	}
+}
+
+func logout_handler(w http.ResponseWriter, r *http.Request) {
+	sess := session.Get(r)
+	if sess != nil {
+		session.Remove(sess, w)		
+		sess = nil
+	}
+	var i loginDisplay	
+	i.InfoText = "Jste odhlášen."
+	loginTemplate, _ = template.ParseFiles("web/login.html")
+	loginTemplate.Execute(w, i)
 }
 
 func pay_handler(w http.ResponseWriter, r *http.Request) {
