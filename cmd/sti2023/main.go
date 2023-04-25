@@ -9,6 +9,7 @@ import (
 	"strings"
 	//	"io"
 	"text/template"
+	"github.com/icza/session"
 	"github.com/Solamil/sti2023"
 )
 
@@ -21,6 +22,9 @@ type indexDisplay struct {
 	Accounts       string
 	Payments       string
 }
+type loginDisplay struct {
+	InfoText string
+}
 
 type acceptDisplay struct {
 	EmailAddress   	string
@@ -31,11 +35,13 @@ type acceptDisplay struct {
 }
 var indexTemplate *template.Template
 var acceptTemplate *template.Template
+var loginTemplate *template.Template
 
 
 
 func main(){
 	//	fmt.Printf("%x", sti2023.Hash(email))
+	//fmt.Printf("%x", sti2023.Hash("kukla7@email.cz"))
 	generateCode()
 
 	//sti2023.WriteCode(email, "sdfa")
@@ -48,14 +54,25 @@ func main(){
 	http.HandleFunc("/accounts", accounts_handler)
 	http.HandleFunc("/mock", mock_handler)
 	http.HandleFunc("/pay", pay_handler)
+	http.HandleFunc("/login", login_handler)
+	http.HandleFunc("/logout", logout_handler)
 	http.HandleFunc("/", index_handler)
 
 	http.ListenAndServe(":8904", nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
-	var email string = "michal.kukla@tul.cz"
+	// var email string = "michal.kukla@tul.cz"
 	
+	sess := session.Get(r)
+	if sess == nil {
+		var i loginDisplay
+		i.InfoText = "" 
+		loginTemplate, _ = template.ParseFiles("web/login.html")
+		loginTemplate.Execute(w, i)
+		return
+	}
+	email := sess.CAttr("Email").(string)
 	var info string = ""
 	fmt.Println(r.URL.Path)
 	if r.URL.Path == "/accept" {
@@ -91,7 +108,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
+	
 	user := sti2023.GetNames(email)
 	firstname := user[0]
 	lastname := user[1]
@@ -105,6 +122,56 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.Payments = getPaymentsHTML(email)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
+}
+
+func login_handler(w http.ResponseWriter, r *http.Request) {
+
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+	if sti2023.CheckPassword(email, password) {
+		password = ""
+		code := r.PostFormValue("code")
+
+		if (code == "" && sti2023.CheckCode(email, "")) || !sti2023.IsCodeUptodate(email) {
+			code := fmt.Sprintf("%d", generateCode())
+			sti2023.WriteCode(email, code)
+			infoText := sendCode(email, code)
+
+			var i loginDisplay
+			i.InfoText = infoText 
+			loginTemplate, _ = template.ParseFiles("web/login.html")
+			loginTemplate.Execute(w, i)
+		} else if code != "" && sti2023.CheckCode(email, code) && sti2023.IsCodeUptodate(email) {
+			sess := session.NewSessionOptions(&session.SessOptions{
+			    CAttrs: map[string]interface{}{"Email": email},
+			})
+			session.Add(sess, w)
+			sti2023.WriteCode(email, "")
+			http.Redirect(w, r, "/", http.StatusFound)
+		} else if code != "" && !sti2023.CheckCode(email, code) && !sti2023.IsCodeUptodate(email) {
+			var i loginDisplay
+			i.InfoText = "⚠️Nepodařilo se přihlásit. Zadaný kód není správný."
+			loginTemplate, _ = template.ParseFiles("web/login.html")
+			loginTemplate.Execute(w, i)
+		}
+	} else {
+		var i loginDisplay
+		i.InfoText = "⚠️Nepodařilo se přihlásit. Heslo nebo emailová adresa není správně."
+		loginTemplate, _ = template.ParseFiles("web/login.html")
+		loginTemplate.Execute(w, i)
+	}
+}
+
+func logout_handler(w http.ResponseWriter, r *http.Request) {
+	sess := session.Get(r)
+	if sess != nil {
+		session.Remove(sess, w)		
+		sess = nil
+	}
+	var i loginDisplay	
+	i.InfoText = "Jste odhlášen."
+	loginTemplate, _ = template.ParseFiles("web/login.html")
+	loginTemplate.Execute(w, i)
 }
 
 func pay_handler(w http.ResponseWriter, r *http.Request) {
@@ -156,6 +223,17 @@ func mockButton(email string) bool {
 	}
 	total += rand.Float64() 
 	return sti2023.CreatePayment(email, total, direction, coinCode) 
+}
+func sendCode(email, code string) string {
+	var result string = ""
+	if ok := sti2023.Mail(email, code); ok {
+		result = fmt.Sprintf("Na emailovou adresu %s Vám byl zaslán ověřovací kód."+
+				"Upozornění: Zprává se může nacházet ve složce SPAM.", email)
+	} else {
+		result = fmt.Sprintf("Na vaši emailovou adresu %s se nepodařilo zaslat ověřovací kód.",
+					email)
+	}
+	return result
 }
 	
 func generateCode() int {

@@ -30,18 +30,18 @@ footer{	margin-top: 2em;
 </head>
 <body>
 	<h3>IS pro banku</h3>
-	<p>{{.InfoText}}</p>
+	<p style="text-align:center">{{.InfoText}}</p>
 	<main>
 
-		<form action="/login" method="GET" class="form" id="login_form" style="margin-left: 5px">
+		<form action="/login" method="POST" class="form" id="login_form" style="margin-left: 5px">
 			<br>
 			<input type="email" id="email" class="value" name="email" pattern=".+@.+" size="30" placeholder="Emailová adresa" required>
 			<br>
-			<input type="password" id="password" placeholder="Heslo" class="value" id="password" size="30" required>
+			<input type="password" id="password" placeholder="Heslo" class="value" name="password" size="30" required>
 			<br>
 			<input type="text" name="code" id="code" class="value" size="30" placeholder="Ověřovací kód">
 			<br>
-			<input type="button" id="button" form="login_form" value="Přihlásit se" style="font-size: 20px; margin: 20px;"/>
+			<input type="submit" id="button" form="login_form" value="Přihlásit se" style="text-align:center;font-size: 20px; margin: 20px;"/>
 		</form>	
 
 	</main>

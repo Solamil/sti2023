@@ -39,8 +39,7 @@ footer{	margin-top: 2em;
 		<h3 style="display: inline-block">Uživatel: {{.User}}</h3>
 		<form action="/logout" method="GET" id="nav_form"
 			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
-			<input type="button" id="button_logout" form="nav_form" value="Odhlásit se"/>
-			<input type="email" name="email" value="{{.EmailAddress}}" style="display: none;" readonly/>
+			<input type="submit" id="button_logout" value="Odhlásit se"/>
 		</form>
 		<br>
 	</nav>
