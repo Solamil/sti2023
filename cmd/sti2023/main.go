@@ -38,7 +38,6 @@ var acceptTemplate *template.Template
 var loginTemplate *template.Template
 
 
-
 func main(){
 	//	fmt.Printf("%x", sti2023.Hash(email))
 	//fmt.Printf("%x", sti2023.Hash("kukla7@email.cz"))
@@ -50,6 +49,7 @@ func main(){
 	//sti2023.CreatePayment(email, 20.0, "in", "GBP")
 	//fmt.Println(sti2023.GetBalances(email))
 	//sti2023.AddCurrency(email, "GBP")
+	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/accounts", accounts_handler)
 	http.HandleFunc("/mock", mock_handler)
@@ -172,6 +172,10 @@ func logout_handler(w http.ResponseWriter, r *http.Request) {
 	i.InfoText = "Jste odhlášen."
 	loginTemplate, _ = template.ParseFiles("web/login.html")
 	loginTemplate.Execute(w, i)
+}
+
+func file_handler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "web"+r.URL.Path)
 }
 
 func pay_handler(w http.ResponseWriter, r *http.Request) {
