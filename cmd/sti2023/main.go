@@ -42,7 +42,7 @@ func main(){
 	//	fmt.Printf("%x", sti2023.Hash(email))
 	//fmt.Printf("%x", sti2023.Hash("kukla7@email.cz"))
 	generateCode()
-
+	sti2023.CurrencyRates()
 	//sti2023.WriteCode(email, "sdfa")
 	//mockButton(email)
 	//sti2023.CurrencyRates()
