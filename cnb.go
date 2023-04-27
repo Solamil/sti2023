@@ -20,6 +20,7 @@ var updated time.Time
 var cnbUrl string = "https://czk.michalkukla.xyz/json"
 var cnbDir string = "cache"
 var cnbFilename string = "cnb"
+var rates Rates
 
 func GetCurrencySum(amount float64, coinCode string) string {
 	var result string = ""
@@ -46,7 +47,6 @@ func GetCurrencySum(amount float64, coinCode string) string {
 func GetCurrencyRate(coinCode string) []string {
 	var result []string = []string{}
 	updateCurrency()
-	var rates Rates
 	ReadJsonFile(cnbDir, cnbFilename, &rates)
 	var index int = GetIndex(rates.Code, coinCode)
 	if index < 0 {
@@ -58,14 +58,12 @@ func GetCurrencyRate(coinCode string) []string {
 }
 
 func GetDate() string {
-	var rates Rates
 	updateCurrency()
 	ReadJsonFile(cnbDir, cnbFilename, &rates)
 	return rates.Date
 }
 
 func IsExistCode(coinCode string) bool {
-	var rates Rates
 	updateCurrency()
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return false
@@ -77,7 +75,6 @@ func IsExistCode(coinCode string) bool {
 }
 
 func GetCoinCodes() []string {
-	var rates Rates
 	updateCurrency()
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return []string{}
@@ -86,7 +83,6 @@ func GetCoinCodes() []string {
 }
 
 func updateCurrency() {
-	var rates Rates
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		CurrencyRates()
 		return
@@ -103,7 +99,6 @@ func updateCurrency() {
 }
 
 func CurrencyRates() {
-	var rates Rates
 	d := Newrequest(cnbUrl)
 	err := json.Unmarshal([]byte(d), &rates)
 	if err != nil {
