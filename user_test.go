@@ -159,6 +159,7 @@ func TestAddCurrency(t *testing.T) {
 		{wrongEmail, "CZK", false},
 		{wrongEmail, "EUR", false},
 		{email, "EUR", true},
+		{email, "EUR", false},
 	}
 
 	for _, test := range tests {
@@ -262,6 +263,74 @@ func TestIsCodeUptodate(t *testing.T) {
 		if got := IsCodeUptodate(test.email); test.exp != got {
 			t.Errorf("Expected '%t' but, got '%t',\n %s %s", test.exp,
 				got, test.email, test.code)
+		}
+	}
+}
+
+func TestGetNames(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+
+	tests := []struct {
+		email string
+		exp   []string
+	}{
+		{wrongEmail, []string{}},
+		{email, []string{"Michal", "Kukla"}},
+	}
+
+	for _, test := range tests {
+		if got := GetNames(test.email); len(test.exp) != len(got) {
+			t.Errorf("Expected '%v' but, got '%v',\n %s", test.exp,
+				got, test.email)
+		}
+	}
+}
+
+func TestGetBalance(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+
+	tests := []struct {
+		email string
+		code  string
+		exp   string 
+	}{
+		{wrongEmail, "CZK", "" },
+		{email, "CZK", "0.0"},
+		{email, "ABC", ""},
+	}
+
+	for _, test := range tests {
+		if got := GetBalance(test.email, test.code); test.exp != got {
+			t.Errorf("Expected '%s' but, got '%s',\n %s %s", test.exp,
+				got, test.email, test.code)
+		}
+	}
+}
+
+func TestGetBalances(t *testing.T) {
+	userDir = "test-cache"
+	var email string = "michal.kukla@tul.cz"
+	var wrongEmail string = "sdkfafa@skdafj.cz"
+	setDefaultUser(userDir, email)
+
+	tests := []struct {
+		email string
+		exp   []string 
+	}{
+		{wrongEmail, []string{} },
+		{email, []string{"0.0", "0.0"}},
+	}
+
+	for _, test := range tests {
+		if got := GetBalances(test.email); len(test.exp) != len(got) {
+			t.Errorf("Expected '%v' but, got '%v',\n %s", test.exp,
+				got, test.email)
 		}
 	}
 }
