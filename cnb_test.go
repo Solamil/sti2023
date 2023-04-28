@@ -49,6 +49,32 @@ func TestGetDate(t *testing.T) {
 	}
 }
 
+func TestGetCoinCodes(t *testing.T) {
+	cnbDir = "test-cache"
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		file, err := os.Open("test-data/devizovy_trh.json")
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer file.Close()
+		byteRates, _ := io.ReadAll(file)
+		w.Write(byteRates)
+	}))
+	cnbUrl = ts.URL
+	tests := []struct {
+		exp      []string
+	}{
+		{[]string{"AUD","BRL","BGN","CNY","DKK","EUR","PHP","HKD","INR","IDR","ISK","ILS","JPY","ZAR","CAD","KRW","HUF","MYR","MXN","XDR","NOK","NZD","PLN","RON","SGD","SEK","CHF","THB","TRY","USD","GBP"}},
+	}
+	for _, test := range tests {
+		if got := GetCoinCodes(); len(got) != len(test.exp) {
+			t.Errorf("Expected '%s' but, got '%s'", test.exp, got)
+		}
+	}
+}
+
 func TestCleanUpCache(t *testing.T) {
 	var cache_dir string = "test-cache"
 	dirRead, _ := os.Open(cache_dir)
