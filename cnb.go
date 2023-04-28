@@ -66,6 +66,7 @@ func GetDate() string {
 
 func IsExistCode(coinCode string) bool {
 	var rates Rates
+	updateCurrency()
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return false
 	}
@@ -77,6 +78,7 @@ func IsExistCode(coinCode string) bool {
 
 func GetCoinCodes() []string {
 	var rates Rates
+	updateCurrency()
 	if !ReadJsonFile(cnbDir, cnbFilename, &rates) {
 		return []string{}
 	}
