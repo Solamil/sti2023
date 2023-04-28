@@ -64,9 +64,9 @@ func TestGetCoinCodes(t *testing.T) {
 	}))
 	cnbUrl = ts.URL
 	tests := []struct {
-		exp      []string
+		exp []string
 	}{
-		{[]string{"AUD","BRL","BGN","CNY","DKK","EUR","PHP","HKD","INR","IDR","ISK","ILS","JPY","ZAR","CAD","KRW","HUF","MYR","MXN","XDR","NOK","NZD","PLN","RON","SGD","SEK","CHF","THB","TRY","USD","GBP"}},
+		{[]string{"AUD", "BRL", "BGN", "CNY", "DKK", "EUR", "PHP", "HKD", "INR", "IDR", "ISK", "ILS", "JPY", "ZAR", "CAD", "KRW", "HUF", "MYR", "MXN", "XDR", "NOK", "NZD", "PLN", "RON", "SGD", "SEK", "CHF", "THB", "TRY", "USD", "GBP"}},
 	}
 	for _, test := range tests {
 		if got := GetCoinCodes(); len(got) != len(test.exp) {

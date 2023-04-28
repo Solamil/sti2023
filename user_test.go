@@ -298,9 +298,9 @@ func TestGetBalance(t *testing.T) {
 	tests := []struct {
 		email string
 		code  string
-		exp   string 
+		exp   string
 	}{
-		{wrongEmail, "CZK", "" },
+		{wrongEmail, "CZK", ""},
 		{email, "CZK", "0.0"},
 		{email, "ABC", ""},
 	}
@@ -321,9 +321,9 @@ func TestGetBalances(t *testing.T) {
 
 	tests := []struct {
 		email string
-		exp   []string 
+		exp   []string
 	}{
-		{wrongEmail, []string{} },
+		{wrongEmail, []string{}},
 		{email, []string{"0.0", "0.0"}},
 	}
 
