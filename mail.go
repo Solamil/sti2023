@@ -13,7 +13,8 @@ type ConfigMail struct {
 }
 
 var c ConfigMail
-var mailFile string = "mail"
+var mailConfigFile string = "mail"
+var mailConfigDir string = "./"
 
 func Mail(email string, code string) bool {
 	c.SmtpHost = "mail.michalkukla.xyz"
@@ -21,7 +22,7 @@ func Mail(email string, code string) bool {
 	c.SmtpUser = "michal@michalkukla.xyz"
 	c.SmtpPass = ""
 
-	if !ReadJsonFile("./", mailFile, &c) {
+	if !ReadJsonFile(mailConfigDir, mailConfigFile, &c) {
 		return false
 	}
 	sendTo := []string{email}
