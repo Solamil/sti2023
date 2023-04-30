@@ -1,0 +1,6 @@
+{
+	"smtpHost":"mail.bad-address.xyz", 
+	"smtpPort":"587",
+	"smtpUser":"user@bad-address.xyz",
+	"smtpPass":"password"
+}
