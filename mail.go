@@ -22,9 +22,8 @@ func Mail(email string, code string) bool {
 	c.SmtpUser = "michal@michalkukla.xyz"
 	c.SmtpPass = ""
 
-	if !ReadJsonFile(mailConfigDir, mailConfigFile, &c) {
-		return false
-	}
+	ReadJsonFile(mailConfigDir, mailConfigFile, &c)
+
 	sendTo := []string{email}
 	body := []byte(fmt.Sprintf("From: %s\n"+
 		"Ověřovací kód do semestrálního projektu\n\n"+
