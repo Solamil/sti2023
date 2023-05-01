@@ -246,6 +246,7 @@ func sendCode(email, code string) (string, bool) {
 func generateCode() int {
 	var max int = 9999
 	var min int = 1000
+	rand.Seed(time.Now().UnixNano())
 	var number int = rand.Intn(max-min) + min
 	return number
 }
