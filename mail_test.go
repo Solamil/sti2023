@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestMail(t *testing.T) {
+func TestFailMail(t *testing.T) {
 	mailConfigDir = "test-data/"
 	mailConfigFile = "mail"	
 
