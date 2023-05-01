@@ -31,7 +31,7 @@ func CreatePayment(email string, total float64, direction string, coinCode strin
 	var balance float64 = 0.0
 
 	if PreparePayment(email, &balance, &total, &direction, &coinCode) {
-		return AddPayment(email, balance, total, direction, coinCode)
+		return addPayment(email, balance, total, direction, coinCode)
 	}
 	return false
 }
@@ -116,7 +116,7 @@ func GetNames(email string) []string {
 	return []string{user.FirstName, user.LastName}
 }
 
-func AddPayment(email string, balance, total float64, direction, coinCode string) bool {
+func addPayment(email string, balance, total float64, direction, coinCode string) bool {
 	if !ReadJsonFile(userDir, email, &user) {
 		return false
 	}
