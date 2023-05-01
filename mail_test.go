@@ -6,7 +6,7 @@ import (
 
 func TestFailMail(t *testing.T) {
 	mailConfigDir = "test-data/"
-	mailConfigFile = "mail"	
+	mailConfigFile = "mail"
 
 	if got := Mail("michal.kukla@tul.cz", "test"); got {
 		t.Errorf("Expected '%t' but, got '%t'", false, got)

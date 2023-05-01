@@ -146,15 +146,15 @@ func TestAddPayment(t *testing.T) {
 	userDir = "test-cache"
 	var email string = "michal.kukla@tul.cz"
 	var wrongEmail string = "sdkfafa@skdafj.cz"
-	
+
 	setDefaultUser(userDir, email)
 	tests := []struct {
-		email        string
-		balance      float64
-		total        float64
-		direction    string
-		coinCode     string
-		exp          bool
+		email     string
+		balance   float64
+		total     float64
+		direction string
+		coinCode  string
+		exp       bool
 	}{
 
 		{email, 0.0, 140.0, "IN", "CZK", true},
@@ -162,8 +162,7 @@ func TestAddPayment(t *testing.T) {
 		{email, 0.0, 20.0, "OUT", "ABC", false},
 	}
 	for _, test := range tests {
-		if got := addPayment(test.email, test.balance, test.total, test.direction, test.coinCode);
-		got != test.exp {
+		if got := addPayment(test.email, test.balance, test.total, test.direction, test.coinCode); got != test.exp {
 			t.Errorf("Expected '%t' but, got '%t'", test.exp, got)
 		}
 	}
