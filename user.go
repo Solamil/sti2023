@@ -121,6 +121,9 @@ func addPayment(email string, balance, total float64, direction, coinCode string
 		return false
 	}
 	index := GetIndex(GetUserCoinCodes(email), coinCode)
+	if index < 0 {
+		return false
+	}
 	strTotal := fmt.Sprintf("%.2f", total)
 	strBalance := fmt.Sprintf("%.2f", balance)
 	user.Balances[index] = strBalance
