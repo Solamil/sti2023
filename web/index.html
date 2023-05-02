@@ -62,7 +62,7 @@ footer{	margin-top: 2em;
 			<h3 style="display: inline-block">Vytvořit platbu</h3>
 			<form action="/accept" method="POST" id="payment_form"
 				style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
-				<input type="number" id="total" name="total" placeholder="1.0" min="0.1" step="0.1" size=10/>
+				<input type="number" id="total" name="total" placeholder="1.00" min="0.01" step="0.01" size=10/>
 				<select name="accounts" id="select_coin">
 					{{.UserCoinCodes}}
 				</select>
