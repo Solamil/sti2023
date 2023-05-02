@@ -41,7 +41,7 @@ var loginTemplate *template.Template
 func main(){
 	//	fmt.Printf("%x", sti2023.Hash(email))
 	//fmt.Printf("%x", sti2023.Hash("kukla7@email.cz"))
-	generateCode()
+	//generateCode()
 	sti2023.CurrencyRates()
 	//sti2023.WriteCode(email, "sdfa")
 	//mockButton(email)
@@ -104,7 +104,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 			acceptTemplate.Execute(w, i)
 			return
 		} else {
-			info = "Platba se nepodařila provést z důvodu nízkého zůstatku na účtech."
+			info = "⚠️Platba se nepodařila provést z důvodu nízkého zůstatku na účtech."
 		}
 
 	}
@@ -192,7 +192,7 @@ func pay_handler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	if !sti2023.CreatePayment(email, total, direction, coinCode) {
 		var i acceptDisplay
-		i.InfoText = "Platba se nezdařila."
+		i.InfoText = "⚠️Platba se nezdařila."
 		i.PayTotal = fmt.Sprintf("%.2f", total)
 		i.PayDirection = direction
 		i.PayCoinCode = coinCode
@@ -240,9 +240,9 @@ func sendCode(email, code string) (string, bool) {
 	var ok bool = false
 	if ok = sti2023.Mail(email, code); ok {
 		result = fmt.Sprintf("Na emailovou adresu %s Vám byl zaslán ověřovací kód."+
-				"Upozornění: Zpráva se může nacházet ve složce SPAM.", email)
+				"⚠️Upozornění: Zpráva se může nacházet ve složce SPAM.", email)
 	} else {
-		result = fmt.Sprintf("Na vaši emailovou adresu %s se nepodařilo zaslat ověřovací kód.",
+		result = fmt.Sprintf("⚠️Na vaši emailovou adresu %s se nepodařilo zaslat ověřovací kód.",
 					email)
 	}
 	return result, ok
