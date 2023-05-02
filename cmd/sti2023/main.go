@@ -132,7 +132,7 @@ func login_handler(w http.ResponseWriter, r *http.Request) {
 		password = ""
 		code := r.PostFormValue("code")
 
-		if (code == "" && sti2023.CheckCode(email, "")) || !sti2023.IsCodeUptodate(email) {
+		if sti2023.CheckCode(email, "") || !sti2023.IsCodeUptodate(email) {
 			code := fmt.Sprintf("%d", generateCode())
 			infoText, ok := sendCode(email, code)
 			if ok {
@@ -150,9 +150,14 @@ func login_handler(w http.ResponseWriter, r *http.Request) {
 			session.Add(sess, w)
 			sti2023.WriteCode(email, "")
 			http.Redirect(w, r, "/", http.StatusFound)
-		} else if code != "" && !sti2023.CheckCode(email, code) && !sti2023.IsCodeUptodate(email) {
+		} else if code != "" && !sti2023.CheckCode(email, code) && sti2023.IsCodeUptodate(email) {
 			var i loginDisplay
 			i.InfoText = "⚠️Nepodařilo se přihlásit. Zadaný kód není správný."
+			loginTemplate, _ = template.ParseFiles("web/login.html")
+			loginTemplate.Execute(w, i)
+		} else if code == "" && sti2023.IsCodeUptodate(email) {
+			var i loginDisplay
+			i.InfoText = fmt.Sprintf("⚠️Nepodařilo se přihlásit. Na Emailovou adresu %s Vám byl zaslán kód splatností 10 minut.", email)
 			loginTemplate, _ = template.ParseFiles("web/login.html")
 			loginTemplate.Execute(w, i)
 		}
@@ -235,7 +240,7 @@ func sendCode(email, code string) (string, bool) {
 	var ok bool = false
 	if ok = sti2023.Mail(email, code); ok {
 		result = fmt.Sprintf("Na emailovou adresu %s Vám byl zaslán ověřovací kód."+
-				"Upozornění: Zprává se může nacházet ve složce SPAM.", email)
+				"Upozornění: Zpráva se může nacházet ve složce SPAM.", email)
 	} else {
 		result = fmt.Sprintf("Na vaši emailovou adresu %s se nepodařilo zaslat ověřovací kód.",
 					email)
