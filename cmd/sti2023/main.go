@@ -50,6 +50,7 @@ func main(){
 	//fmt.Println(sti2023.GetBalances(email))
 	//sti2023.AddCurrency(email, "GBP")
 	http.HandleFunc("/cover.html", file_handler)
+	http.HandleFunc("/dsp.pdf", file_handler)
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/accounts", accounts_handler)
 	http.HandleFunc("/mock", mock_handler)
